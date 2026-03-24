@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saint Trust — Sign In</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+.page { display:none !important; }
+.page.active { display:block !important; animation: pgIn .5s cubic-bezier(.16,1,.3,1) both; }
+@keyframes pgIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:none} }
+
+/* LOGIN */
+#page-login { padding-top:64px; min-height:100vh; }
+.login-grid { display:grid; grid-template-columns:1fr 1fr; min-height:calc(100vh - 64px); }
+.login-left { background:var(--slate); display:flex; flex-direction:column; justify-content:center; padding:80px 72px; position:relative; overflow:hidden; }
+.login-left::after { content:''; position:absolute; top:-100px; right:-100px; width:400px; height:400px; background:radial-gradient(circle, rgba(184,150,62,.1) 0%, transparent 65%); }
+.login-brand { font-family:'Cormorant Garamond',serif; font-size:32px; font-weight:300; color:var(--ivory); letter-spacing:.12em; text-transform:uppercase; margin-bottom:64px; }
+.login-brand em { font-style:italic; color:var(--gold2); }
+.login-quote { font-family:'Cormorant Garamond',serif; font-size:clamp(28px,3vw,44px); font-weight:300; line-height:1.2; color:var(--ivory); margin-bottom:24px; letter-spacing:-.01em; }
+.login-quote em { font-style:italic; color:var(--gold2); }
+.login-quote-attr { font-size:12px; font-family:'DM Mono',monospace; letter-spacing:.12em; text-transform:uppercase; color:rgba(247,244,238,.3); }
+.login-stats { margin-top:80px; padding-top:32px; border-top:1px solid rgba(255,255,255,.06); display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+.login-stat-val { font-family:'Cormorant Garamond',serif; font-size:26px; font-weight:300; color:var(--gold2); letter-spacing:-.01em; }
+.login-stat-label { font-size:11px; color:rgba(247,244,238,.3); letter-spacing:.1em; text-transform:uppercase; margin-top:2px; }
+.login-right { background:var(--ivory); display:flex; align-items:center; justify-content:center; padding:80px 72px; }
+.login-form-wrap { width:100%; max-width:380px; }
+.login-form-title { font-family:'Cormorant Garamond',serif; font-size:38px; font-weight:300; letter-spacing:-.02em; margin-bottom:6px; }
+.login-form-sub { font-size:14px; color:var(--muted); margin-bottom:48px; font-weight:300; }
+.field { margin-bottom:24px; }
+.field label { display:block; font-size:11px; font-weight:500; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-bottom:10px; }
+.field-wrap { position:relative; }
+.field-wrap svg { position:absolute; left:16px; top:50%; transform:translateY(-50%); width:16px; height:16px; stroke:var(--warm); stroke-width:1.5; }
+.field input { width:100%; padding:14px 16px 14px 48px; border:1px solid var(--border); border-radius:2px; font-family:'DM Sans',sans-serif; font-size:14px; transition:border-color .2s; }
+.field input:focus { outline:none; border-color:var(--gold); }
+.login-error { display:none; background:#FEE; border:1px solid #F0CCCC; border-radius:2px; padding:12px 16px; margin-bottom:24px; font-size:13px; color:var(--red); }
+.login-error.show { display:block; }
+.btn-login { width:100%; padding:14px; background:var(--slate); color:var(--ivory); border:none; border-radius:2px; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; letter-spacing:.08em; text-transform:uppercase; cursor:pointer; transition:all .2s; display:flex; align-items:center; justify-content:center; gap:8px; }
+.btn-login:hover { background:var(--slate2); }
+.btn-login:disabled { opacity:.5; cursor:not-allowed; }
+.face-id-btn { width:100%; padding:14px; background:var(--cream); color:var(--slate); border:1px solid var(--border); border-radius:2px; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; letter-spacing:.08em; text-transform:uppercase; cursor:pointer; transition:all .2s; display:flex; align-items:center; justify-content:center; gap:8px; margin-top:12px; }
+.face-id-btn:hover { border-color:var(--gold); }
+.login-divider { display:flex; align-items:center; gap:12px; margin:24px 0; color:var(--muted); font-size:12px; }
+.login-divider::before, .login-divider::after { content:''; flex:1; height:1px; background:var(--border); }
+.login-footer { font-size:13px; color:var(--muted); text-align:center; }
+.login-footer a { color:var(--gold); cursor:pointer; text-decoration:none; }
+
+/* AUTH */
+#page-auth { padding-top:64px; min-height:100vh; }
+.auth-grid { display:grid; grid-template-columns:1fr 1fr; min-height:calc(100vh - 64px); }
+.auth-left { background:var(--slate); display:flex; flex-direction:column; justify-content:center; padding:80px 72px; position:relative; overflow:hidden; }
+.auth-left::after { content:''; position:absolute; top:-100px; right:-100px; width:400px; height:400px; background:radial-gradient(circle, rgba(184,150,62,.1) 0%, transparent 65%); }
+.auth-brand { font-family:'Cormorant Garamond',serif; font-size:32px; font-weight:300; color:var(--ivory); letter-spacing:.12em; text-transform:uppercase; margin-bottom:64px; }
+.auth-brand em { font-style:italic; color:var(--gold2); }
+.auth-shield { font-size:80px; margin-bottom:40px; color:var(--gold2); }
+.auth-left-title { font-family:'Cormorant Garamond',serif; font-size:clamp(32px,4vw,52px); font-weight:300; line-height:1.2; color:var(--ivory); margin-bottom:16px; letter-spacing:-.01em; }
+.auth-left-title em { font-style:italic; color:var(--gold2); }
+.auth-left-sub { font-size:16px; font-weight:300; line-height:1.75; color:rgba(247,244,238,.55); max-width:380px; }
+.auth-right { background:var(--ivory); display:flex; align-items:center; justify-content:center; padding:80px 72px; }
+.auth-form-wrap { width:100%; max-width:380px; }
+.auth-form-title { font-family:'Cormorant Garamond',serif; font-size:32px; font-weight:300; letter-spacing:-.02em; margin-bottom:12px; }
+.auth-form-sub { font-size:14px; color:var(--muted); margin-bottom:32px; font-weight:300; }
+.otp-inputs { display:flex; gap:12px; margin-bottom:32px; }
+.otp-input { width:50px; height:50px; border:1px solid var(--border); border-radius:4px; text-align:center; font-size:24px; font-weight:600; font-family:'DM Mono',monospace; transition:border-color .2s; }
+.otp-input:focus { outline:none; border-color:var(--gold); }
+.otp-input.filled { border-color:var(--gold); }
+.otp-input.error { border-color:var(--red); }
+.auth-error { display:none; background:#FEE; border:1px solid #F0CCCC; border-radius:2px; padding:12px 16px; margin-bottom:24px; font-size:13px; color:var(--red); }
+.auth-error.show { display:block; }
+.auth-timer { text-align:center; font-size:13px; color:var(--muted); margin-bottom:24px; }
+.auth-timer-count { font-family:'DM Mono',monospace; font-weight:600; color:var(--gold); }
+.btn-verify { width:100%; padding:14px; background:var(--slate); color:var(--ivory); border:none; border-radius:2px; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; letter-spacing:.08em; text-transform:uppercase; cursor:pointer; transition:all .2s; display:flex; align-items:center; justify-content:center; gap:8px; }
+.btn-verify:hover { background:var(--slate2); }
+.btn-verify:disabled { opacity:.5; cursor:not-allowed; }
+.auth-footer { text-align:center; font-size:13px; color:var(--muted); margin-top:24px; }
+.auth-footer a { color:var(--gold); cursor:pointer; text-decoration:none; }
+
+@media (max-width:768px) {
+  .login-grid, .auth-grid { grid-template-columns:1fr; }
+  .login-left, .auth-left { display:none; }
+  .login-right, .auth-right { padding:40px 24px; }
+}
+</style>
+</head>
+<body>
+
+<div id="pageLoadOverlay">
+  <div class="page-loader">
+    <div class="page-loader-logo">Saint <em>Trust</em></div>
+    <div class="page-loader-bar"><div class="page-loader-fill"></div></div>
+  </div>
+</div>
+
+<div class="topbar">
+  <button class="hamburger-btn" id="hamburgerBtn" style="visibility:hidden;"><span></span><span></span><span></span></button>
+  <a class="topbar-logo" href="index.html">Saint <em>Trust</em></a>
+  <nav class="topbar-nav" id="topNav">
+    <a href="index.html">Home</a>
+    <a href="login.html" class="active">Sign In</a>
+  </nav>
+  <div class="topbar-right" id="topbarRight">
+    <button class="btn-ghost" onclick="showLogin()">Sign In</button>
+    <button class="btn-gold" onclick="showLogin()">Open Account</button>
+  </div>
+</div>
+
+<!-- LOGIN PAGE -->
+<div class="page active" id="page-login">
+  <div class="login-grid">
+    <div class="login-left">
+      <div class="login-brand">Saint <em>Trust</em></div>
+      <div class="login-quote">"The disciplined<br>management of wealth<br>is a form of <em>freedom.</em>"</div>
+      <div class="login-quote-attr">— Saint Trust Banking Principles, 1923</div>
+      <div class="login-stats">
+        <div><div class="login-stat-val">$42B</div><div class="login-stat-label">Assets Under Management</div></div>
+        <div><div class="login-stat-val">101 yrs</div><div class="login-stat-label">In Continuous Operation</div></div>
+        <div><div class="login-stat-val">AA+</div><div class="login-stat-label">Credit Rating</div></div>
+        <div><div class="login-stat-val">99.99%</div><div class="login-stat-label">Platform Uptime</div></div>
+      </div>
+    </div>
+    <div class="login-right">
+      <div class="login-form-wrap">
+        <div class="login-form-title">Welcome back</div>
+        <div class="login-form-sub">Sign in to your private banking portal</div>
+        <div class="login-error" id="loginError"></div>
+        <div class="field">
+          <label>User ID</label>
+          <div class="field-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <input type="email" placeholder="david@sainttrust.com" id="loginEmail">
+          </div>
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <div class="field-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <input type="password" placeholder="••••••••••••" id="loginPwd">
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;margin-top:-8px;">
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);cursor:pointer;">
+            <input type="checkbox" style="width:auto;padding:0;background:none;border:none;accent-color:var(--gold)"> Remember device
+          </label>
+          <a style="font-size:13px;color:var(--gold);text-decoration:none;cursor:pointer;">Forgot password?</a>
+        </div>
+        <button class="btn-login" id="loginBtn" onclick="handleLogin()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+          Sign In Securely
+        </button>
+        <div class="login-divider"><span>or</span></div>
+        <button class="face-id-btn" onclick="handleLogin()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 9.5c.5-.5 1.5-1 2-.5m0 0c.5.5.5 1.5 0 2"/><path d="M14 9.5c.5-.5 1.5-1 2-.5m0 0c.5.5.5 1.5 0 2"/><path d="M9 15c.5 1 2.5 2 6 0"/></svg>
+          Sign in with Face ID / Touch ID
+        </button>
+        <div class="login-footer" style="margin-top:28px;">New to Saint Trust? <a>Request an invitation</a></div>
+        <div style="margin-top:16px;text-align:center;"><div style="font-size:11px;color:var(--muted);line-height:1.6;">Protected by 256-bit encryption · MFA Required · <span style="color:var(--sage2)">Secure Connection</span></div></div>
+        <div style="margin-top:20px;text-align:center;"><div style="font-size:11px;color:var(--warm);line-height:1.6;font-family:'DM Mono',monospace;"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AUTH PAGE -->
+<div class="page" id="page-auth">
+  <div class="auth-grid">
+    <div class="auth-left">
+      <div class="auth-brand">Saint <em>Trust</em></div>
+      <div class="auth-shield">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:80px;height:80px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <div class="auth-left-title">Two-factor<br><em>authentication</em></div>
+      <div class="auth-left-sub">Enter the 6-digit code from your authenticator app to complete sign-in.</div>
+    </div>
+    <div class="auth-right">
+      <div class="auth-form-wrap">
+        <div class="auth-form-title">Verify your identity</div>
+        <div class="auth-form-sub">Enter the code from your authenticator app</div>
+        <div class="auth-error" id="authError"></div>
+        <div class="otp-inputs">
+          <input type="text" class="otp-input" id="otp0" maxlength="1">
+          <input type="text" class="otp-input" id="otp1" maxlength="1">
+          <input type="text" class="otp-input" id="otp2" maxlength="1">
+          <input type="text" class="otp-input" id="otp3" maxlength="1">
+          <input type="text" class="otp-input" id="otp4" maxlength="1">
+          <input type="text" class="otp-input" id="otp5" maxlength="1">
+        </div>
+        <div class="auth-timer">Code expires in <span class="auth-timer-count" id="authTimerCount">30</span>s</div>
+        <button class="btn-verify" id="verifyBtn" onclick="handleVerify()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Verify &amp; Sign In
+        </button>
+        <div class="auth-footer"><a onclick="resetAuthTimer()">Resend code</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="auth.js"></script>
+<script src="shared.js"></script>
+<script>
+let authTimerInterval = null;
+let authTimeLeft = 30;
+let currentSessionId = null;
+
+function showLogin() {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-login').classList.add('active');
+}
+
+function showAuth() {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-auth').classList.add('active');
+}
+
+async function handleLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pwd = document.getElementById('loginPwd').value;
+  const errEl = document.getElementById('loginError');
+  const btn = document.getElementById('loginBtn');
+  
+  if (!email || !pwd) {
+    errEl.textContent = 'Please enter your email and password.';
+    errEl.classList.add('show');
+    return;
+  }
+  
+  btn.innerHTML = '<span class="spinner"></span> Verifying...';
+  btn.disabled = true;
+  errEl.classList.remove('show');
+  
+  try {
+    const result = await signIn(email, pwd);
+    currentSessionId = result.sessionId;
+    resetOTP();
+    startAuthTimer();
+    showAuth();
+  } catch (error) {
+    errEl.textContent = error.message;
+    errEl.classList.add('show');
+  } finally {
+    btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg> Sign In Securely`;
+    btn.disabled = false;
+  }
+}
+
+async function handleVerify() {
+  let code = '';
+  for (let i = 0; i < 6; i++) code += (document.getElementById('otp' + i).value || '');
+  const errEl = document.getElementById('authError');
+  const btn = document.getElementById('verifyBtn');
+  
+  if (code.length !== 6) {
+    errEl.textContent = 'Please enter the complete 6-digit code.';
+    errEl.classList.add('show');
+    for (let i = 0; i < 6; i++) {
+      const inp = document.getElementById('otp' + i);
+      if (!inp.value) inp.classList.add('error');
+    }
+    return;
+  }
+  
+  btn.innerHTML = '<span class="spinner"></span> Verifying...';
+  btn.disabled = true;
+  errEl.classList.remove('show');
+  
+  try {
+    const result = await verifyTOTP(currentSessionId, code);
+    clearInterval(authTimerInterval);
+    showPageLoader(() => { window.location.href = 'dashboard.html'; });
+  } catch (error) {
+    errEl.textContent = error.message;
+    errEl.classList.add('show');
+    resetOTP();
+  } finally {
+    btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Verify &amp; Sign In`;
+    btn.disabled = false;
+  }
+}
+
+function resetOTP() {
+  for (let i = 0; i < 6; i++) {
+    const inp = document.getElementById('otp' + i);
+    inp.value = '';
+    inp.classList.remove('filled', 'error');
+  }
+  document.getElementById('otp0').focus();
+}
+
+function startAuthTimer() {
+  authTimeLeft = 30;
+  document.getElementById('authTimerCount').textContent = authTimeLeft;
+  clearInterval(authTimerInterval);
+  authTimerInterval = setInterval(() => {
+    authTimeLeft--;
+    document.getElementById('authTimerCount').textContent = authTimeLeft;
+    if (authTimeLeft <= 0) {
+      clearInterval(authTimerInterval);
+      resetAuthTimer();
+    }
+  }, 1000);
+}
+
+function resetAuthTimer() {
+  startAuthTimer();
+}
+
+// OTP input handling
+document.addEventListener('DOMContentLoaded', () => {
+  for (let i = 0; i < 6; i++) {
+    const inp = document.getElementById('otp' + i);
+    inp.addEventListener('input', (e) => {
+      if (e.target.value.length > 0) {
+        e.target.classList.add('filled');
+        if (i < 5) document.getElementById('otp' + (i + 1)).focus();
+      } else {
+        e.target.classList.remove('filled');
+      }
+    });
+    inp.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace' && e.target.value.length === 0 && i > 0) {
+        document.getElementById('otp' + (i - 1)).focus();
+      }
+    });
+  }
+});
+</script>
+</body>
+</html>

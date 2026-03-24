@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saint Trust — Transaction History</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+/* ========== BASE STYLES ========== */
+* { box-sizing: border-box; }
+
+body { 
+  padding-top: 64px;
+  margin: 0;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.transactions-main { 
+  flex: 1; 
+  padding: 48px 56px; 
+  margin-left: 280px;
+  max-width: 1400px;
+}
+
+/* ========== DASHBOARD GREETING ========== */
+.dash-greeting {
+  margin-bottom: 32px;
+}
+
+.dash-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px;
+  font-weight: 400;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.dash-sub {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ========== SEARCH AND FILTERS ========== */
+.search-filter-container {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.txn-search {
+  flex: 1;
+  min-width: 200px;
+  max-width: 320px;
+  padding: 10px 16px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  transition: border-color 0.2s;
+}
+
+.txn-search:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+
+.txn-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.txn-filter {
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  background: var(--ivory);
+  color: var(--text);
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.txn-filter:hover {
+  border-color: var(--gold);
+  background: var(--gold2);
+}
+
+.txn-filter.active {
+  background: var(--gold);
+  color: var(--slate);
+  border-color: var(--gold);
+}
+
+/* ========== TRANSACTION TABLE ========== */
+.txn-table {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.txn-table-header {
+  display: grid;
+  grid-template-columns: 50px 1fr 140px 120px 140px;
+  gap: 16px;
+  padding: 16px;
+  background: var(--ivory);
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.txn-table-row {
+  display: grid;
+  grid-template-columns: 50px 1fr 140px 120px 140px;
+  gap: 16px;
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+  align-items: center;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.txn-table-row:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.txn-table-row:last-child {
+  border-bottom: none;
+}
+
+.txn-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+}
+
+.txn-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.txn-name {
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+
+.txn-category {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.txn-date {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.txn-amount {
+  font-family: 'DM Mono', monospace;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.txn-amount.credit {
+  color: var(--green);
+}
+
+/* ========== STATUS BADGES ========== */
+.pending-badge {
+  background: #FF9800;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.under-review-badge {
+  background: #9C27B0;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.completed-badge {
+  background: var(--green);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.pending-notice {
+  font-size: 11px;
+  color: #FF9800;
+  margin-top: 4px;
+}
+
+/* ========== PAGINATION ========== */
+.txn-pagination {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+.pagination-btn {
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  background: var(--ivory);
+  color: var(--text);
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.pagination-btn:hover {
+  border-color: var(--gold);
+}
+
+.pagination-btn.active {
+  background: var(--gold);
+  color: var(--slate);
+  border-color: var(--gold);
+}
+
+/* ========== MODAL STYLES ========== */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  padding: 32px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--muted);
+  transition: color 0.2s;
+}
+
+.modal-close:hover {
+  color: var(--text);
+}
+
+/* ========== FORM STYLES ========== */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--slate);
+}
+
+.btn-submit {
+  width: 100%;
+  padding: 12px;
+  background: var(--slate);
+  color: var(--ivory);
+  border: none;
+  border-radius: 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-submit:hover {
+  background: var(--slate2);
+}
+
+/* ========== EMPTY STATE ========== */
+.empty-state {
+  padding: 40px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* ========== TRANSACTION DETAILS GRID ========== */
+.txn-details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.txn-detail-field {
+  margin-bottom: 16px;
+}
+
+.txn-detail-label {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 4px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.txn-detail-value {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.txn-detail-value.amount {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.txn-detail-value.monospace {
+  font-family: 'DM Mono', monospace;
+}
+
+.txn-details-divider {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+.txn-details-description {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+/* ========== TABLET STYLES (iPad - 768px to 1024px) ========== */
+@media (max-width: 1024px) {
+  .transactions-main {
+    padding: 32px 28px;
+    margin-left: 240px;
+  }
+
+  .txn-table-header,
+  .txn-table-row {
+    grid-template-columns: 45px 1fr 120px 100px 120px;
+    gap: 12px;
+  }
+
+  .dash-title {
+    font-size: 28px;
+  }
+
+  .modal-content {
+    padding: 28px;
+  }
+}
+
+/* ========== SMALL TABLET / LANDSCAPE PHONE (768px) ========== */
+@media (max-width: 768px) {
+  body {
+    padding-top: 56px;
+  }
+
+  .transactions-main {
+    margin-left: 0;
+    padding: 20px 16px;
+  }
+
+  .dash-title {
+    font-size: 24px;
+    margin-bottom: 6px;
+  }
+
+  .dash-sub {
+    font-size: 13px;
+  }
+
+  .search-filter-container {
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .txn-search {
+    max-width: 100%;
+    padding: 9px 12px;
+    font-size: 12px;
+  }
+
+  .txn-filters {
+    gap: 6px;
+  }
+
+  .txn-filter {
+    padding: 6px 10px;
+    font-size: 10px;
+  }
+
+  /* Convert table to card layout on tablet */
+  .txn-table {
+    border: none;
+    background: transparent;
+  }
+
+  .txn-table-header {
+    display: none;
+  }
+
+  .txn-table-row {
+    display: flex;
+    flex-direction: column;
+    grid-template-columns: none;
+    gap: 12px;
+    padding: 16px;
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+
+  .txn-table-row:last-child {
+    margin-bottom: 0;
+  }
+
+  .txn-table-row > div:first-child {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .txn-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .txn-icon svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .txn-name {
+    font-size: 13px;
+  }
+
+  .txn-category {
+    font-size: 11px;
+  }
+
+  .txn-date {
+    font-size: 12px;
+  }
+
+  .txn-amount {
+    font-size: 14px;
+  }
+
+  .txn-pagination {
+    gap: 6px;
+    margin-top: 20px;
+  }
+
+  .pagination-btn {
+    padding: 7px 12px;
+    font-size: 11px;
+  }
+
+  .modal-content {
+    padding: 24px;
+    border-radius: 10px;
+  }
+
+  .modal-close {
+    top: 12px;
+    right: 12px;
+    font-size: 20px;
+  }
+
+  .txn-details-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .txn-detail-field {
+    margin-bottom: 12px;
+  }
+
+  .txn-detail-label {
+    font-size: 11px;
+    margin-bottom: 3px;
+  }
+
+  .txn-detail-value {
+    font-size: 14px;
+  }
+
+  .txn-detail-value.amount {
+    font-size: 20px;
+  }
+
+  .txn-details-divider {
+    margin-top: 20px;
+    padding-top: 20px;
+  }
+
+  .txn-details-description {
+    font-size: 13px;
+  }
+
+  .form-label {
+    font-size: 11px;
+    margin-bottom: 6px;
+  }
+
+  .form-input {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+
+  .btn-submit {
+    padding: 10px;
+    font-size: 11px;
+  }
+}
+
+/* ========== MOBILE PHONE STYLES (480px and below) ========== */
+@media (max-width: 480px) {
+  body {
+    padding-top: 52px;
+  }
+
+  .transactions-main {
+    padding: 16px 12px;
+  }
+
+  .dash-greeting {
+    margin-bottom: 20px;
+  }
+
+  .dash-title {
+    font-size: 20px;
+    margin-bottom: 4px;
+  }
+
+  .dash-sub {
+    font-size: 12px;
+  }
+
+  .search-filter-container {
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-direction: column;
+  }
+
+  .txn-search {
+    width: 100%;
+    max-width: 100%;
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+
+  .txn-filters {
+    gap: 4px;
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+
+  .txn-filter {
+    padding: 5px 8px;
+    font-size: 9px;
+    flex-shrink: 0;
+  }
+
+  .txn-table {
+    border: none;
+    background: transparent;
+  }
+
+  .txn-table-header {
+    display: none;
+  }
+
+  .txn-table-row {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px;
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 10px;
+  }
+
+  .txn-table-row > div:first-child {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .txn-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .txn-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .txn-name {
+    font-size: 12px;
+  }
+
+  .txn-category {
+    font-size: 10px;
+  }
+
+  .txn-date {
+    font-size: 11px;
+  }
+
+  .txn-amount {
+    font-size: 13px;
+  }
+
+  .pending-badge,
+  .under-review-badge,
+  .completed-badge {
+    padding: 3px 6px;
+    font-size: 9px;
+  }
+
+  .pending-notice {
+    font-size: 10px;
+    margin-top: 2px;
+  }
+
+  .txn-pagination {
+    gap: 4px;
+    margin-top: 16px;
+  }
+
+  .pagination-btn {
+    padding: 6px 10px;
+    font-size: 10px;
+  }
+
+  .modal-overlay {
+    padding: 12px;
+  }
+
+  .modal-content {
+    padding: 20px;
+    border-radius: 8px;
+    max-height: 85vh;
+  }
+
+  .modal-close {
+    top: 10px;
+    right: 10px;
+    font-size: 18px;
+  }
+
+  .txn-details-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .txn-detail-field {
+    margin-bottom: 10px;
+  }
+
+  .txn-detail-label {
+    font-size: 10px;
+    margin-bottom: 2px;
+  }
+
+  .txn-detail-value {
+    font-size: 13px;
+  }
+
+  .txn-detail-value.amount {
+    font-size: 18px;
+  }
+
+  .txn-details-divider {
+    margin-top: 16px;
+    padding-top: 16px;
+  }
+
+  .txn-details-description {
+    font-size: 12px;
+  }
+
+  .form-group {
+    margin-bottom: 16px;
+  }
+
+  .form-label {
+    font-size: 10px;
+    margin-bottom: 5px;
+  }
+
+  .form-input {
+    padding: 7px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+  }
+
+  .btn-submit {
+    padding: 9px;
+    font-size: 10px;
+    border-radius: 5px;
+  }
+
+  .empty-state {
+    padding: 24px;
+    font-size: 12px;
+  }
+}
+
+/* ========== EXTRA SMALL PHONES (320px and below) ========== */
+@media (max-width: 360px) {
+  .transactions-main {
+    padding: 12px 8px;
+  }
+
+  .dash-title {
+    font-size: 18px;
+  }
+
+  .txn-search {
+    padding: 7px 8px;
+  }
+
+  .txn-filter {
+    padding: 4px 6px;
+    font-size: 8px;
+  }
+
+  .txn-table-row {
+    padding: 10px;
+    gap: 8px;
+  }
+
+  .txn-icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .txn-name {
+    font-size: 11px;
+  }
+
+  .modal-content {
+    padding: 16px;
+  }
+
+  .txn-detail-value.amount {
+    font-size: 16px;
+  }
+}
+
+/* ========== PRINT STYLES ========== */
+@media print {
+  body {
+    padding: 0;
+  }
+
+  .transactions-main {
+    margin-left: 0;
+    padding: 0;
+  }
+
+  .modal-overlay {
+    display: none !important;
+  }
+
+  .txn-table-row {
+    page-break-inside: avoid;
+  }
+}
+</style>
+</head>
+<body>
+
+<div id="pageLoadOverlay">
+  <div class="page-loader">
+    <div class="page-loader-logo">Saint <em>Trust</em></div>
+    <div class="page-loader-bar"><div class="page-loader-fill"></div></div>
+  </div>
+</div>
+
+<div class="topbar">
+  <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleSidebar()"><span></span><span></span><span></span></button>
+  <a class="topbar-logo" href="index.html">Saint <em>Trust</em></a>
+  <nav class="topbar-nav" id="topNav" style="display:none;"></nav>
+  <div class="topbar-right">
+    <span style="font-size:12px;color:rgba(247,244,238,.5);font-family:'DM Mono',monospace;letter-spacing:.06em;">David Duncan</span>
+    <button class="btn-ghost" onclick="signOut()">Sign Out</button>
+  </div>
+</div>
+
+<div class="dashboard-layout">
+  <div class="sidebar" id="mainSidebar"></div>
+
+  <div class="transactions-main">
+    <div class="dash-greeting">
+      <div class="dash-title">Transaction History</div>
+      <div class="dash-sub">Complete history from 2025 to present. Click any transaction for details.</div>
+    </div>
+
+    <div class="search-filter-container">
+      <input type="text" class="txn-search" id="txnSearch" placeholder="Search transactions..." oninput="filterTransactions()">
+    </div>
+
+    <div class="txn-filters" id="txnFilters">
+      <div class="txn-filter active" onclick="setFilter('all',this)">All</div>
+      <div class="txn-filter" onclick="setFilter('debit',this)">Expenses</div>
+      <div class="txn-filter" onclick="setFilter('credit',this)">Income</div>
+      <div class="txn-filter" onclick="setFilter('pending',this)">Pending</div>
+      <div class="txn-filter" onclick="setFilter('2026',this)">2026</div>
+      <div class="txn-filter" onclick="setFilter('2025',this)">2025</div>
+    </div>
+
+    <div class="txn-table">
+      <div class="txn-table-header">
+        <div></div>
+        <div>Description</div>
+        <div>Date</div>
+        <div>Amount</div>
+        <div>Status</div>
+      </div>
+      <div id="txnTableBody"></div>
+    </div>
+
+    <div class="txn-pagination" id="txnPagination"></div>
+  </div>
+</div>
+
+<!-- TRANSACTION MODAL -->
+<div class="modal-overlay" id="transactionModal">
+  <div class="modal-content" style="position:relative;">
+    <button class="modal-close" onclick="closeModal('transactionModal')">✕</button>
+    <div class="dash-title" style="margin-bottom:24px;">Transaction Details</div>
+    <div id="transactionDetails"></div>
+  </div>
+</div>
+
+<!-- PROFILE MODAL -->
+<div class="modal-overlay" id="profileModal">
+  <div class="modal-content" style="position:relative;">
+    <button class="modal-close" onclick="closeModal('profileModal')">✕</button>
+    <div class="dash-title" style="margin-bottom:24px;">Edit Profile</div>
+    <div style="text-align:center;margin-bottom:24px;">
+      <div id="profileAvatarPreview" style="width:120px;height:120px;background:var(--gold);border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:48px;font-weight:bold;color:var(--text);cursor:pointer;overflow:hidden;" onclick="document.getElementById('profilePicInput').click();">DD</div>
+      <input type="file" id="profilePicInput" style="display:none;" accept="image/*" onchange="handleProfilePicUpload(event)">
+      <div style="font-size:12px;color:var(--muted);">Click avatar to upload photo</div>
+    </div>
+    <div class="form-group">
+      <div class="form-label">Email</div>
+      <input type="email" class="form-input" id="profileEmail" value="david@sainttrust.com">
+    </div>
+    <div class="form-group">
+      <div class="form-label">Phone</div>
+      <input type="tel" class="form-input" id="profilePhone" value="+1 (555) 123-4567">
+    </div>
+    <button class="btn-submit" onclick="saveProfile()">Save Changes</button>
+  </div>
+</div>
+
+<script src="auth.js"></script>
+<script src="shared.js"></script>
+<script src="sidebar.js"></script>
+<script>
+window.ACTIVE_PAGE = 'transactions';
+let currentFilter = 'all';
+let currentPage = 1;
+const PAGE_SIZE = 25;
+let allTransactions = [];
+
+document.addEventListener('DOMContentLoaded', () => {
+  requireAuth();
+  initSidebar('transactions');
+  
+  // Force clear cache if coming from transfer
+  if (sessionStorage.getItem('forceRefresh')) {
+    allTransactions = [];
+  }
+  
+  loadTransactions();
+});
+
+async function loadTransactions() {
+  try {
+    const result = await getTransactions();
+    if (result && result.transactions) {
+      allTransactions = result.transactions;
+      renderTransactions();
+      
+      // Check if we need to highlight a newly created transaction
+      const highlightId = sessionStorage.getItem('highlightTransactionId');
+      if (highlightId) {
+        sessionStorage.removeItem('highlightTransactionId');
+        // Show the modal for the newly created transaction
+        setTimeout(() => {
+          showTransactionDetails(parseInt(highlightId));
+        }, 300);
+      }
+    }
+  } catch (error) {
+    console.error('Error loading transactions:', error);
+    // Fallback to local data if backend fails
+    allTransactions = allTransactionsData || [];
+    renderTransactions();
+  }
+}
+
+function setFilter(f, el) {
+  currentFilter = f;
+  currentPage = 1;
+  document.querySelectorAll('.txn-filter').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderTransactions();
+}
+
+function filterTransactions() {
+  currentPage = 1;
+  renderTransactions();
+}
+
+function getFilteredData() {
+  const search = (document.getElementById('txnSearch')?.value || '').toLowerCase();
+  return allTransactions.filter(t => {
+    const matchFilter = currentFilter === 'all' ? true
+      : currentFilter === 'debit' ? t.type === 'debit'
+      : currentFilter === 'credit' ? t.type === 'credit'
+      : currentFilter === 'pending' ? t.status === 'Pending'
+      : t.dateObj && new Date(t.dateObj).getFullYear() === parseInt(currentFilter);
+    const matchSearch = !search || t.name.toLowerCase().includes(search) || t.cat.toLowerCase().includes(search) || t.date.toLowerCase().includes(search) || t.amount.includes(search);
+    return matchFilter && matchSearch;
+  });
+}
+
+function getStatusBadgeHTML(status) {
+  if (status === 'Pending') {
+    return `<span class="pending-badge">Pending</span><div class="pending-notice">Payment will be completed after 2-3 business days</div>`;
+  } else if (status === 'Under Review') {
+    return `<span class="under-review-badge">Under Review</span>`;
+  } else {
+    return `<span class="completed-badge">Completed</span>`;
+  }
+}
+
+function renderTransactions() {
+  const tbody = document.getElementById('txnTableBody');
+  if (!tbody) return;
+  const data = getFilteredData();
+  const total = data.length;
+  const totalPages = Math.ceil(total / PAGE_SIZE);
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const pageData = data.slice(start, start + PAGE_SIZE);
+
+  tbody.innerHTML = pageData.length === 0
+    ? '<div class="empty-state">No transactions found.</div>'
+    : pageData.map(t => `
+      <div class="txn-table-row" onclick="showTransactionDetails(${t.id})">
+        <div style="display:flex;align-items:center;">
+          <div class="txn-icon" style="background:${getIconColor(t.cat)};width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;">${getIconSVG(t.icon)}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;">
+          <span class="txn-name">${t.name}</span>
+          <span class="txn-category">${t.cat}</span>
+        </div>
+        <div class="txn-date">${t.date}</div>
+        <div class="txn-amount ${t.type === 'credit' ? 'credit' : ''}">${t.amount}</div>
+        <div>${getStatusBadgeHTML(t.status)}</div>
+      </div>
+    `).join('');
+
+  // Pagination
+  const pag = document.getElementById('txnPagination');
+  if (pag) {
+    if (totalPages <= 1) { pag.innerHTML = ''; return; }
+    let html = '';
+    for (let i = 1; i <= totalPages; i++) {
+      html += `<button class="pagination-btn ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+    }
+    pag.innerHTML = html;
+  }
+}
+
+function goToPage(p) {
+  currentPage = p;
+  renderTransactions();
+  window.scrollTo(0, 0);
+}
+
+function showTransactionDetails(txnId) {
+  const txn = allTransactions.find(t => t.id === txnId);
+  if (!txn) return;
+  
+  const details = document.getElementById('transactionDetails');
+  if (details) {
+    const statusHTML = getStatusBadgeHTML(txn.status);
+    details.innerHTML = `
+      <div class="txn-details-grid">
+        <div>
+          <div class="txn-detail-field">
+            <div class="txn-detail-label">Merchant</div>
+            <div class="txn-detail-value">${txn.merchant}</div>
+          </div>
+          <div class="txn-detail-field">
+            <div class="txn-detail-label">Category</div>
+            <div class="txn-detail-value">${txn.cat}</div>
+          </div>
+          <div class="txn-detail-field">
+            <div class="txn-detail-label">Reference</div>
+            <div class="txn-detail-value monospace">${txn.ref}</div>
+          </div>
+        </div>
+        <div>
+          <div class="txn-detail-field">
+            <div class="txn-detail-label">Amount</div>
+            <div class="txn-detail-value amount" style="color:${txn.type === 'debit' ? 'var(--text)' : 'var(--green)'};">${txn.amount}</div>
+          </div>
+          <div class="txn-detail-field">
+            <div class="txn-detail-label">Date</div>
+            <div class="txn-detail-value">${txn.date}</div>
+          </div>
+          <div class="txn-detail-field">
+            <div class="txn-detail-label">Status</div>
+            <div>${statusHTML}</div>
+          </div>
+        </div>
+      </div>
+      <div class="txn-details-divider">
+        <div class="txn-detail-label">Details</div>
+        <div class="txn-details-description">${txn.details}</div>
+      </div>
+    `;
+  }
+  openModal('transactionModal');
+}
+</script>
+</body>
+</html>

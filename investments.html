@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saint Trust — Investments</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+body { padding-top:64px; }
+.investments-main { flex:1; padding:48px 56px; margin-left:280px; }
+@media(max-width:768px){ .investments-main{ margin-left:0; padding:20px; } }
+.holding-row { display:flex; justify-content:space-between; align-items:center; padding:14px 0; border-bottom:1px solid var(--border); }
+.holding-row:last-child { border-bottom:none; }
+.holding-ticker { font-family:'DM Mono',monospace; font-size:13px; font-weight:600; color:var(--gold2); }
+.holding-name { font-size:13px; color:var(--muted); }
+.holding-val { font-family:'DM Mono',monospace; font-size:14px; font-weight:600; }
+.holding-chg.pos { color:var(--green); }
+.holding-chg.neg { color:var(--red); }
+</style>
+</head>
+<body>
+
+<div id="pageLoadOverlay">
+  <div class="page-loader">
+    <div class="page-loader-logo">Saint <em>Trust</em></div>
+    <div class="page-loader-bar"><div class="page-loader-fill"></div></div>
+  </div>
+</div>
+
+<div class="topbar">
+  <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleSidebar()"><span></span><span></span><span></span></button>
+  <a class="topbar-logo" href="index.html">Saint <em>Trust</em></a>
+  <nav class="topbar-nav" id="topNav" style="display:none;"></nav>
+  <div class="topbar-right">
+    <span style="font-size:12px;color:rgba(247,244,238,.5);font-family:'DM Mono',monospace;letter-spacing:.06em;">David Duncan</span>
+    <button class="btn-ghost" onclick="signOut()">Sign Out</button>
+  </div>
+</div>
+
+<div class="dashboard-layout">
+  <div class="sidebar" id="mainSidebar"></div>
+
+  <div class="investments-main">
+    <div class="dash-greeting">
+      <div class="dash-title">Investments</div>
+      <div class="dash-sub">Your portfolio performance as of March 1, 2026.</div>
+    </div>
+
+    <div class="account-cards" style="margin-bottom:32px;">
+      <div class="acc-card primary">
+        <div class="acc-card-glow"></div>
+        <div class="acc-card-label">Total Portfolio Value</div>
+        <div class="acc-card-balance">$550,000.00</div>
+        <div class="acc-card-sub">Investment Account</div>
+        <div class="acc-card-footer">
+          <div class="acc-card-change pos">+8.7% YTD</div>
+          <div class="acc-card-num">•••• 5920</div>
+        </div>
+      </div>
+      <div class="acc-card secondary">
+        <div class="acc-card-label">Unrealized Gains</div>
+        <div class="acc-card-balance">$1,002,400.00</div>
+        <div class="acc-card-sub">Year to Date</div>
+        <div class="acc-card-footer">
+          <div class="acc-card-change pos">+8.7% YTD</div>
+          <div class="acc-card-num">Since Jan 1, 2026</div>
+        </div>
+      </div>
+      <div class="acc-card tertiary">
+        <div class="acc-card-glow"></div>
+        <div class="acc-card-label">Dividends Received</div>
+        <div class="acc-card-balance">$84,200.00</div>
+        <div class="acc-card-sub">Year to Date</div>
+        <div class="acc-card-footer">
+          <div class="acc-card-change pos">+12.3% vs last year</div>
+          <div class="acc-card-num">2026 Total</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dash-grid">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Holdings</div>
+          <div class="panel-action">As of Mar 1, 2026</div>
+        </div>
+        <div class="holding-row">
+          <div><div class="holding-ticker">AAPL</div><div class="holding-name">Apple Inc.</div></div>
+          <div style="text-align:right;"><div class="holding-val">$2,840,000</div><div class="holding-chg pos">+12.4%</div></div>
+        </div>
+        <div class="holding-row">
+          <div><div class="holding-ticker">MSFT</div><div class="holding-name">Microsoft Corp.</div></div>
+          <div style="text-align:right;"><div class="holding-val">$2,100,000</div><div class="holding-chg pos">+9.8%</div></div>
+        </div>
+        <div class="holding-row">
+          <div><div class="holding-ticker">BRK.B</div><div class="holding-name">Berkshire Hathaway</div></div>
+          <div style="text-align:right;"><div class="holding-val">$1,980,000</div><div class="holding-chg pos">+6.2%</div></div>
+        </div>
+        <div class="holding-row">
+          <div><div class="holding-ticker">VTI</div><div class="holding-name">Vanguard Total Market ETF</div></div>
+          <div style="text-align:right;"><div class="holding-val">$1,760,000</div><div class="holding-chg pos">+7.1%</div></div>
+        </div>
+        <div class="holding-row">
+          <div><div class="holding-ticker">AMZN</div><div class="holding-name">Amazon.com Inc.</div></div>
+          <div style="text-align:right;"><div class="holding-val">$1,420,000</div><div class="holding-chg pos">+15.3%</div></div>
+        </div>
+        <div class="holding-row">
+          <div><div class="holding-ticker">GOOGL</div><div class="holding-name">Alphabet Inc.</div></div>
+          <div style="text-align:right;"><div class="holding-val">$1,240,000</div><div class="holding-chg neg">-2.1%</div></div>
+        </div>
+        <div class="holding-row">
+          <div><div class="holding-ticker">NVDA</div><div class="holding-name">NVIDIA Corporation</div></div>
+          <div style="text-align:right;"><div class="holding-val">$1,140,000</div><div class="holding-chg pos">+22.8%</div></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Asset Allocation</div>
+        </div>
+        <div style="padding:16px 0;">
+          <canvas id="allocationChart" style="max-height:260px;"></canvas>
+        </div>
+        <div style="margin-top:16px;">
+          <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;">
+            <span style="display:flex;align-items:center;gap:8px;"><span style="width:10px;height:10px;border-radius:50%;background:#4A6741;display:inline-block;"></span>US Equities</span>
+            <span style="font-family:'DM Mono',monospace;font-weight:600;">62%</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;">
+            <span style="display:flex;align-items:center;gap:8px;"><span style="width:10px;height:10px;border-radius:50%;background:#B8963E;display:inline-block;"></span>Fixed Income</span>
+            <span style="font-family:'DM Mono',monospace;font-weight:600;">18%</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;">
+            <span style="display:flex;align-items:center;gap:8px;"><span style="width:10px;height:10px;border-radius:50%;background:#2C3E50;display:inline-block;"></span>International</span>
+            <span style="font-family:'DM Mono',monospace;font-weight:600;">12%</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:13px;">
+            <span style="display:flex;align-items:center;gap:8px;"><span style="width:10px;height:10px;border-radius:50%;background:#8E44AD;display:inline-block;"></span>Alternatives</span>
+            <span style="font-family:'DM Mono',monospace;font-weight:600;">8%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROFILE MODAL -->
+<div class="modal-overlay" id="profileModal">
+  <div class="modal-content" style="position:relative;">
+    <button class="modal-close" onclick="closeModal('profileModal')">✕</button>
+    <div class="dash-title" style="margin-bottom:24px;">Edit Profile</div>
+    <div style="text-align:center;margin-bottom:24px;">
+      <div id="profileAvatarPreview" style="width:120px;height:120px;background:var(--gold);border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:48px;font-weight:bold;color:var(--text);cursor:pointer;overflow:hidden;" onclick="document.getElementById('profilePicInput').click();">JW</div>
+      <input type="file" id="profilePicInput" style="display:none;" accept="image/*" onchange="handleProfilePicUpload(event)">
+      <div style="font-size:12px;color:var(--muted);">Click avatar to upload photo</div>
+    </div>
+    <div class="form-group">
+      <div class="form-label">Email</div>
+      <input type="email" class="form-input" id="profileEmail" value="james@verdant.com">
+    </div>
+    <div class="form-group">
+      <div class="form-label">Phone</div>
+      <input type="tel" class="form-input" id="profilePhone" value="+1 (555) 123-4567">
+    </div>
+    <button class="btn-submit" onclick="saveProfile()">Save Changes</button>
+  </div>
+</div>
+
+<script src="shared.js"></script>
+<script src="sidebar.js"></script>
+<script>
+window.ACTIVE_PAGE = 'investments';
+document.addEventListener('DOMContentLoaded', () => {
+  initSidebar('investments');
+  new Chart(document.getElementById('allocationChart'), {
+    type: 'doughnut',
+    data: {
+      labels: ['US Equities', 'Fixed Income', 'International', 'Alternatives'],
+      datasets: [{ data: [62, 18, 12, 8], backgroundColor: ['#4A6741','#B8963E','#2C3E50','#8E44AD'], borderWidth: 0 }]
+    },
+    options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } } }
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saint Trust — Overview</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+/* ========== BASE STYLES ========== */
+* { box-sizing: border-box; }
+
+body { 
+  padding-top: 64px;
+  margin: 0;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.dashboard-main { 
+  flex: 1; 
+  padding: 48px 56px; 
+  margin-left: 280px;
+  max-width: 1400px;
+}
+
+/* ========== DASHBOARD GREETING ========== */
+.dash-greeting {
+  margin-bottom: 32px;
+}
+
+.dash-title {
+  font-family: 'Cormorant Gramond', serif;
+  font-size: 32px;
+  font-weight: 400;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.dash-date {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.dash-sub {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ========== ACCOUNT INFO BAR ========== */
+.acct-info-bar {
+  display: flex;
+  gap: 24px;
+  padding: 20px;
+  background: var(--ivory);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 32px;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.acct-info-item {
+  flex: 1;
+  min-width: 140px;
+}
+
+.acct-info-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.acct-info-value {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+/* ========== ACCOUNT CARDS ========== */
+.account-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.acc-card {
+  position: relative;
+  padding: 28px;
+  border-radius: 12px;
+  color: white;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.acc-card:hover {
+  transform: translateY(-4px);
+}
+
+.acc-card.primary { background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%); }
+.acc-card.secondary { background: linear-gradient(135deg, #4a6741 0%, #3a5233 100%); }
+.acc-card.tertiary { background: linear-gradient(135deg, #b8963e 0%, #a68532 100%); }
+
+.acc-card-glow {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.acc-card-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.8;
+  margin-bottom: 12px;
+}
+
+.acc-card-balance {
+  font-family: 'DM Mono', monospace;
+  font-size: 28px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.acc-card-sub {
+  font-size: 13px;
+  opacity: 0.7;
+  margin-bottom: 24px;
+}
+
+.acc-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+}
+
+.acc-card-change.pos { color: #a8e6cf; }
+
+.acc-card-num {
+  font-family: 'DM Mono', monospace;
+  opacity: 0.6;
+}
+
+/* ========== QUICK ACTIONS ========== */
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.qa-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--text);
+  transition: all 0.2s ease;
+}
+
+.qa-btn:hover {
+  background: var(--ivory);
+  border-color: var(--gold);
+  transform: translateY(-2px);
+}
+
+.qa-icon {
+  width: 40px;
+  height: 40px;
+  background: var(--slate);
+  color: var(--ivory);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.qa-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.qa-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ========== DASHBOARD GRID ========== */
+.dash-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 32px;
+}
+
+.panel {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.panel-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--text);
+}
+
+.panel-action {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gold);
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ========== TRANSACTION LIST ========== */
+.txn-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.txn-item:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.txn-item:last-child {
+  border-bottom: none;
+}
+
+.txn-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+}
+
+.txn-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.txn-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+
+.txn-date {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.txn-amount {
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: right;
+}
+
+.txn-amount.debit { color: var(--text); }
+.txn-amount.credit { color: var(--green); }
+
+.txn-cat {
+  font-size: 11px;
+  color: var(--muted);
+  text-align: right;
+}
+
+/* ========== SPENDING ANALYTICS ========== */
+.spend-bar-wrap {
+  margin-bottom: 16px;
+}
+
+.spend-month {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  margin-bottom: 6px;
+}
+
+.spend-bar-bg {
+  width: 100%;
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.spend-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+}
+
+.spend-categories {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.spend-cat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+}
+
+.spend-cat-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.spend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.spend-cat-val {
+  font-weight: 600;
+}
+
+/* ========== NOTIFICATIONS ========== */
+.notif-list {
+  margin-top: 16px;
+}
+
+.notif-item {
+  display: flex;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.notif-item:last-child {
+  border-bottom: none;
+}
+
+.notif-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--gold);
+  border-radius: 50%;
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+
+.notif-dot.read {
+  background: var(--border);
+}
+
+/* ========== FDIC FOOTER ========== */
+.fdic-footer {
+  padding: 48px 56px;
+  margin-left: 280px;
+  background: var(--ivory);
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.fdic-badge {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+
+.fdic-links {
+  display: flex;
+  gap: 20px;
+}
+
+.fdic-links a {
+  font-size: 11px;
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.fdic-links a:hover {
+  color: var(--text);
+}
+
+/* ========== TABLET STYLES (iPad - 768px to 1024px) ========== */
+@media (max-width: 1024px) {
+  .dashboard-main {
+    padding: 32px 28px;
+    margin-left: 240px;
+  }
+
+  .account-cards {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .quick-actions {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dash-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .fdic-footer {
+    padding: 32px 28px;
+    margin-left: 240px;
+  }
+}
+
+/* ========== SMALL TABLET / LANDSCAPE PHONE (768px) ========== */
+@media (max-width: 768px) {
+  body {
+    padding-top: 56px;
+  }
+
+  .dashboard-main {
+    margin-left: 0;
+    padding: 20px 16px;
+  }
+
+  .acct-info-bar {
+    padding: 16px;
+    margin-bottom: 24px;
+  }
+
+  .account-cards {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .acc-card {
+    padding: 20px;
+  }
+
+  .acc-card-balance {
+    font-size: 24px;
+  }
+
+  .quick-actions {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .qa-btn {
+    padding: 16px;
+  }
+
+  .panel {
+    padding: 16px;
+  }
+
+  .fdic-footer {
+    margin-left: 0;
+    padding: 24px 16px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .fdic-links {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+}
+
+/* ========== MOBILE PHONE STYLES (480px and below) ========== */
+@media (max-width: 480px) {
+  body {
+    padding-top: 52px;
+  }
+
+  .dashboard-main {
+    padding: 16px 12px;
+  }
+
+  .dash-title {
+    font-size: 24px;
+  }
+
+  .acct-info-bar {
+    gap: 16px;
+  }
+
+  .acct-info-item {
+    min-width: 120px;
+  }
+
+  .quick-actions {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .qa-btn {
+    padding: 12px;
+  }
+
+  .qa-icon {
+    width: 32px;
+    height: 32px;
+    margin-bottom: 8px;
+  }
+
+  .qa-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .qa-label {
+    font-size: 10px;
+  }
+
+  .spend-categories {
+    grid-template-columns: 1fr;
+  }
+
+  .txn-name {
+    font-size: 12px;
+  }
+
+  .txn-amount {
+    font-size: 12px;
+  }
+}
+</style>
+</head>
+<body>
+
+<div id="pageLoadOverlay">
+  <div class="page-loader">
+    <div class="page-loader-logo">Saint <em>Trust</em></div>
+    <div class="page-loader-bar"><div class="page-loader-fill"></div></div>
+  </div>
+</div>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleSidebar()"><span></span><span></span><span></span></button>
+  <a class="topbar-logo" href="index.html">Saint <em>Trust</em></a>
+  <nav class="topbar-nav" id="topNav" style="display:none;"></nav>
+  <div class="topbar-right" id="topbarRight">
+    <span id="topbarName" style="font-size:12px;color:rgba(247,244,238,.5);font-family:'DM Mono',monospace;letter-spacing:.06em;">David Duncan</span>
+    <button class="btn-ghost" onclick="signOut()">Sign Out</button>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="dashboard-layout">
+  <div class="sidebar" id="mainSidebar"></div>
+
+  <div class="dashboard-main">
+    <div class="dash-greeting">
+      <div class="dash-greeting-top">
+        <div class="dash-title">Overview</div>
+      </div>
+      <div class="dash-date" id="dashDate"></div>
+      <div class="dash-sub">Welcome back, David. Here's your account summary.</div>
+    </div>
+
+    <!-- Account Info Bar -->
+    <div class="acct-info-bar">
+      <div class="acct-info-item">
+        <div class="acct-info-label">Routing Number</div>
+        <div class="acct-info-value">021000089</div>
+      </div>
+      <div class="acct-info-item">
+        <div class="acct-info-label">Member Since</div>
+        <div class="acct-info-value">January 2025</div>
+      </div>
+      <div class="acct-info-item">
+        <div class="acct-info-label">Account Tier</div>
+        <div class="acct-info-value">Private Client</div>
+      </div>
+      <div class="acct-info-item">
+        <div class="acct-info-label">Relationship Manager</div>
+        <div class="acct-info-value">Alexandra Chen</div>
+      </div>
+      <div class="acct-info-item">
+        <div class="acct-info-label">Next Statement</div>
+        <div class="acct-info-value">Mar 31, 2026</div>
+      </div>
+    </div>
+
+    <div class="account-cards">
+      <div class="acc-card primary">
+        <div class="acc-card-glow"></div>
+        <div class="acc-card-label">Primary Account</div>
+        <div class="acc-card-balance">$225,000.00</div>
+        <div class="acc-card-sub">Checking Account</div>
+        <div class="acc-card-footer">
+          <div class="acc-card-change pos">+2.4% this month</div>
+          <div class="acc-card-num">•••• 3847</div>
+        </div>
+      </div>
+      <div class="acc-card secondary">
+        <div class="acc-card-label">Savings Account</div>
+        <div class="acc-card-balance">$125,000.00</div>
+        <div class="acc-card-sub">High-Yield Savings</div>
+        <div class="acc-card-footer">
+          <div class="acc-card-change pos">+4.2% APY</div>
+          <div class="acc-card-num">•••• 2847</div>
+        </div>
+      </div>
+      <div class="acc-card tertiary">
+        <div class="acc-card-glow"></div>
+        <div class="acc-card-label">Investment Account</div>
+        <div class="acc-card-balance">$550,000.00</div>
+        <div class="acc-card-sub">Portfolio</div>
+        <div class="acc-card-footer">
+          <div class="acc-card-change pos">+8.7% YTD</div>
+          <div class="acc-card-num">•••• 5920</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="quick-actions">
+      <a class="qa-btn" href="transfer.html" onclick="navTo(event,'transfer.html')">
+        <div class="qa-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+        <div class="qa-label">Transfer</div>
+      </a>
+      <a class="qa-btn" href="bill.html" onclick="navTo(event,'bill.html')">
+        <div class="qa-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></div>
+        <div class="qa-label">Pay Bill</div>
+      </a>
+      <a class="qa-btn" href="cards.html" onclick="navTo(event,'cards.html')">
+        <div class="qa-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div>
+        <div class="qa-label">Cards</div>
+      </a>
+      <a class="qa-btn" href="investments.html" onclick="navTo(event,'investments.html')">
+        <div class="qa-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+        <div class="qa-label">Invest</div>
+      </a>
+    </div>
+
+    <div class="dash-grid">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Recent Transactions</div>
+          <a class="panel-action" href="transactions.html" onclick="navTo(event,'transactions.html')">View All</a>
+        </div>
+        <div class="txn-list" id="txnList"></div>
+      </div>
+
+      <div class="panel spend-panel">
+        <div class="spend-chart">
+          <div class="panel-title" style="margin-bottom:20px;">Spending Analytics</div>
+          <div style="background:var(--cream);padding:16px;border-radius:8px;margin-bottom:20px;">
+            <canvas id="spendingChart" style="max-width:100%;height:250px;"></canvas>
+          </div>
+          <div class="panel-title" style="margin-bottom:20px;margin-top:20px;">Monthly Spending — 2026</div>
+          <div class="spend-bar-wrap">
+            <div class="spend-month"><span>February 2026</span><span style="font-family:'DM Mono',monospace;font-weight:600;">$62,610</span></div>
+            <div class="spend-bar-bg"><div class="spend-bar-fill" style="width:78%;background:var(--gold2)"></div></div>
+          </div>
+          <div class="spend-bar-wrap">
+            <div class="spend-month"><span>January 2026</span><span style="font-family:'DM Mono',monospace;font-weight:600;">$51,390</span></div>
+            <div class="spend-bar-bg"><div class="spend-bar-fill" style="width:64%;background:var(--sage2)"></div></div>
+          </div>
+          <div class="spend-categories">
+            <div class="spend-cat">
+              <div class="spend-cat-left"><div class="spend-dot" style="background:#C0392B"></div><div class="spend-cat-name">Travel</div></div>
+              <div class="spend-cat-val">$42,180</div>
+            </div>
+            <div class="spend-cat">
+              <div class="spend-cat-left"><div class="spend-dot" style="background:#8E44AD"></div><div class="spend-cat-name">Shopping</div></div>
+              <div class="spend-cat-val">$12,390</div>
+            </div>
+            <div class="spend-cat">
+              <div class="spend-cat-left"><div class="spend-dot" style="background:var(--sage2)"></div><div class="spend-cat-name">Investment</div></div>
+              <div class="spend-cat-val">$55,000</div>
+            </div>
+            <div class="spend-cat">
+              <div class="spend-cat-left"><div class="spend-dot" style="background:#E67E22"></div><div class="spend-cat-name">Dining</div></div>
+              <div class="spend-cat-val">$3,420</div>
+            </div>
+            <div class="spend-cat">
+              <div class="spend-cat-left"><div class="spend-dot" style="background:#2C3E50"></div><div class="spend-cat-name">Housing</div></div>
+              <div class="spend-cat-val">$4,850</div>
+            </div>
+          </div>
+        </div>
+        <div class="panel-header" style="border-top:1px solid var(--border);border-bottom:none;margin-top:24px;">
+          <div class="panel-title" style="font-size:16px;">Notifications</div>
+        </div>
+        <div class="notif-list">
+          <div class="notif-item">
+            <div class="notif-dot"></div>
+            <div style="font-size:13px;">New statement available for February 2026.</div>
+          </div>
+          <div class="notif-item">
+            <div class="notif-dot"></div>
+            <div style="font-size:13px;">Security alert: New login from a new device.</div>
+          </div>
+          <div class="notif-item">
+            <div class="notif-dot read"></div>
+            <div style="font-size:13px;">Your transfer to John Smith was successful.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TRANSACTION MODAL -->
+<div class="modal-overlay" id="transactionModal">
+  <div class="modal-content" style="position:relative;">
+    <button class="modal-close" onclick="closeModal('transactionModal')">✕</button>
+    <div class="dash-title" style="margin-bottom:24px;">Transaction Details</div>
+    <div id="transactionDetails"></div>
+  </div>
+</div>
+
+<!-- PROFILE MODAL -->
+<div class="modal-overlay" id="profileModal">
+  <div class="modal-content" style="position:relative;">
+    <button class="modal-close" onclick="closeModal('profileModal')">✕</button>
+    <div class="dash-title" style="margin-bottom:24px;">Edit Profile</div>
+    <div style="text-align:center;margin-bottom:24px;">
+      <div id="profileAvatarPreview" style="width:120px;height:120px;background:var(--gold);border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:48px;font-weight:bold;color:var(--text);cursor:pointer;overflow:hidden;" onclick="document.getElementById('profilePicInput').click();">DD</div>
+      <input type="file" id="profilePicInput" style="display:none;" accept="image/*" onchange="handleProfilePicUpload(event)">
+      <div style="font-size:12px;color:var(--muted);">Click avatar to upload photo</div>
+    </div>
+    <div class="form-group">
+      <div class="form-label">Email</div>
+      <input type="email" class="form-input" id="profileEmail" value="david@sainttrust.com">
+    </div>
+    <div class="form-group">
+      <div class="form-label">Phone</div>
+      <input type="tel" class="form-input" id="profilePhone" value="+1 (555) 123-4567">
+    </div>
+    <button class="btn-submit" onclick="saveProfile()">Save Changes</button>
+  </div>
+</div>
+
+<!-- FDIC Footer -->
+<div class="fdic-footer">
+  <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+    <div class="fdic-badge"><strong>FDIC</strong> Member — Insured up to $250,000 per depositor</div>
+    <div class="fdic-badge"><strong>EQUAL HOUSING</strong> Lender</div>
+    <div class="fdic-badge"><strong>ABA</strong> Routing: 021000089</div>
+  </div>
+  <div class="fdic-links">
+    <a href="#">Privacy Policy</a>
+    <a href="#">Terms of Service</a>
+    <a href="#">Disclosures</a>
+    <a href="#">Contact Us</a>
+  </div>
+</div>
+
+<script src="shared.js"></script>
+<script src="sidebar.js"></script>
+<script>
+window.ACTIVE_PAGE = 'dashboard';
+
+// Define signOut function since it's missing in shared.js
+function signOut() {
+  showPageLoader(() => {
+    // Clear any session data if needed
+    localStorage.removeItem('verdantAuth'); // Example auth key
+    window.location.href = 'index.html';
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  initSidebar('dashboard');
+
+  // Date
+  const dateEl = document.getElementById('dashDate');
+  if (dateEl) dateEl.textContent = new Date().toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+  // Render 2026 transactions only in recent list
+  renderDashboardTransactions();
+
+  // Chart
+  renderSpendingChart();
+});
+
+function renderDashboardTransactions() {
+  const list = document.getElementById('txnList');
+  if (!list) return;
+  // Show only 2026 transactions (most recent 6)
+  const recent2026 = allTransactionsData.filter(t => t.dateObj.getFullYear() === 2026).slice(0, 6);
+  list.innerHTML = recent2026.map(t => `
+    <div class="txn-item" onclick="showTransactionDetails(${t.id})">
+      <div class="txn-icon" style="background:${getIconColor(t.cat)};">${getIconSVG(t.icon)}</div>
+      <div>
+        <div class="txn-name">${t.name}</div>
+        <div class="txn-date">${t.date}</div>
+      </div>
+      <div style="text-align:right;margin-left:auto">
+        <div class="txn-amount ${t.type}">${t.amount}</div>
+        <div class="txn-cat">${t.cat}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderSpendingChart() {
+  const ctx = document.getElementById('spendingChart');
+  if (!ctx) return;
+  new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Travel', 'Investment', 'Shopping', 'Dining', 'Services', 'Income'],
+      datasets: [{
+        data: [42180, 55000, 28900, 8450, 0, 105420],
+        backgroundColor: ['#C0392B','#4A6741','#9C27B0','#FF9800','#2196F3','#27AE60'],
+        borderWidth: 0,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position:'bottom', labels:{ font:{ family:'DM Sans', size:11 }, padding:12 } } }
+    }
+  });
+}
+
+function showTransactionDetails(txnId) {
+  const txn = allTransactionsData.find(t => t.id === txnId);
+  if (!txn) return;
+  
+  const details = document.getElementById('transactionDetails');
+  if (details) {
+    details.innerHTML = `
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+        <div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:4px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;">Merchant</div>
+          <div style="font-size:16px;font-weight:500;margin-bottom:16px;">${txn.merchant}</div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:4px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;">Category</div>
+          <div style="font-size:14px;margin-bottom:16px;">${txn.cat}</div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:4px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;">Reference</div>
+          <div style="font-size:14px;font-family:'DM Mono',monospace;">${txn.ref}</div>
+        </div>
+        <div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:4px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;">Amount</div>
+          <div style="font-size:24px;font-weight:600;margin-bottom:16px;color:${txn.type==='debit'?'var(--text)':'var(--green)'};">${txn.amount}</div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:4px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;">Date</div>
+          <div style="font-size:14px;margin-bottom:16px;">${txn.date}</div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:4px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;">Status</div>
+          <div style="font-size:14px;font-weight:600;color:var(--green);">${txn.status}</div>
+        </div>
+      </div>
+      <div style="margin-top:24px;padding-top:24px;border-top:1px solid var(--border);">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;">Details</div>
+        <div style="font-size:14px;line-height:1.6;">${txn.details}</div>
+      </div>
+    `;
+  }
+  openModal('transactionModal');
+}
+</script>
+</body>
+</html>

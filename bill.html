@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saint Trust — Pay a Bill</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+body { padding-top:64px; }
+.bill-main { flex:1; padding:48px 56px; margin-left:280px; }
+@media(max-width:768px){ .bill-main{ margin-left:0; padding:20px; } }
+
+.bill-tab-content { display:none; }
+.bill-tab-content.active { display:block; animation: pgIn .3s ease both; }
+@keyframes pgIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+
+.scheduled-item {
+  background:var(--cream); border:1px solid var(--border); border-radius:4px;
+  padding:16px 20px; margin-bottom:12px;
+  display:flex; justify-content:space-between; align-items:center;
+}
+.scheduled-item-info { display:flex; flex-direction:column; gap:4px; }
+.scheduled-item-name { font-size:14px; font-weight:500; }
+.scheduled-item-date { font-size:12px; color:var(--muted); }
+.scheduled-item-amount { font-family:'DM Mono',monospace; font-size:16px; font-weight:600; color:var(--text); }
+
+.history-status {
+  padding:4px 10px; border-radius:99px; font-size:11px; font-weight:600; letter-spacing:.04em;
+}
+.history-status.completed { background:#E5F5E5; color:var(--green); }
+.history-status.pending { background:#FFF5E5; color:#E67E22; }
+</style>
+</head>
+<body>
+
+<div id="pageLoadOverlay">
+  <div class="page-loader">
+    <div class="page-loader-logo">Saint <em>Trust</em></div>
+    <div class="page-loader-bar"><div class="page-loader-fill"></div></div>
+  </div>
+</div>
+
+<div class="topbar">
+  <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleSidebar()"><span></span><span></span><span></span></button>
+  <a class="topbar-logo" href="index.html">Saint <em>Trust</em></a>
+  <nav class="topbar-nav" id="topNav" style="display:none;"></nav>
+  <div class="topbar-right">
+    <span style="font-size:12px;color:rgba(247,244,238,.5);font-family:'DM Mono',monospace;letter-spacing:.06em;">David Duncan</span>
+    <button class="btn-ghost" onclick="signOut()">Sign Out</button>
+  </div>
+</div>
+
+<div class="dashboard-layout">
+  <div class="sidebar" id="mainSidebar"></div>
+
+  <div class="bill-main">
+    <div class="dash-greeting">
+      <div class="dash-title">Pay a Bill</div>
+      <div class="dash-sub">Pay your bills quickly and securely.</div>
+    </div>
+
+    <div class="bill-tabs">
+      <div class="bill-tab active" onclick="switchBillTab('new',this)">Pay New Bill</div>
+      <div class="bill-tab" onclick="switchBillTab('scheduled',this)">Scheduled Payments</div>
+      <div class="bill-tab" onclick="switchBillTab('history',this)">Payment History</div>
+    </div>
+
+    <!-- PAY NEW BILL TAB -->
+    <div class="bill-tab-content active" id="tab-new">
+      <div class="bill-form-card">
+        <div class="form-title">Select Payee</div>
+        <div class="bill-payee-section" id="billPayeeList">
+          <div class="bill-payee-item" onclick="selectPayee(this,'Electric Company')">
+            <div class="bill-payee-info">
+              <div class="bill-payee-name">Electric Company</div>
+              <div class="bill-payee-account">Account: •••• 5847</div>
+            </div>
+            <div class="bill-payee-radio"></div>
+          </div>
+          <div class="bill-payee-item" onclick="selectPayee(this,'Water Department')">
+            <div class="bill-payee-info">
+              <div class="bill-payee-name">Water Department</div>
+              <div class="bill-payee-account">Account: •••• 2934</div>
+            </div>
+            <div class="bill-payee-radio"></div>
+          </div>
+          <div class="bill-payee-item" onclick="selectPayee(this,'Internet Provider')">
+            <div class="bill-payee-info">
+              <div class="bill-payee-name">Internet Provider</div>
+              <div class="bill-payee-account">Account: •••• 1029</div>
+            </div>
+            <div class="bill-payee-radio"></div>
+          </div>
+          <div class="bill-payee-item" onclick="selectPayee(this,'Mortgage Lender')">
+            <div class="bill-payee-info">
+              <div class="bill-payee-name">Mortgage Lender</div>
+              <div class="bill-payee-account">Account: •••• 7364</div>
+            </div>
+            <div class="bill-payee-radio"></div>
+          </div>
+          <div class="bill-payee-item" onclick="selectPayee(this,'Insurance Premium')">
+            <div class="bill-payee-info">
+              <div class="bill-payee-name">Insurance Premium</div>
+              <div class="bill-payee-account">Account: •••• 4821</div>
+            </div>
+            <div class="bill-payee-radio"></div>
+          </div>
+        </div>
+
+        <div class="form-section" style="margin-top:32px;">
+          <div class="form-section-title">Payment Details</div>
+          <div class="form-group">
+            <div class="form-label">Amount</div>
+            <input type="text" class="form-input" id="billAmount" placeholder="0.00" oninput="formatAmountInput(this); updateBillSummary()" onkeypress="return /[0-9.,]/i.test(event.key)">
+          </div>
+          <div class="form-group">
+            <div class="form-label">Payment Date</div>
+            <input type="date" class="form-input" id="billDate">
+          </div>
+          <div class="form-group">
+            <div class="form-label">From Account</div>
+            <select class="form-select">
+              <option>Primary Checking (•••• 3847)</option>
+              <option>Savings Account (•••• 2847)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <div class="form-label">Memo (Optional)</div>
+            <input type="text" class="form-input" placeholder="e.g. March bill payment">
+          </div>
+        </div>
+
+        <div style="background:var(--ivory);border:1px solid var(--border);border-radius:4px;padding:16px;margin-bottom:24px;" id="billSummaryBox">
+          <div style="font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;">Payment Summary</div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;">
+            <span>Payee</span><span id="summaryPayee" style="font-weight:500;">—</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;">
+            <span>Amount</span><span id="summaryAmount" style="font-family:'DM Mono',monospace;font-weight:600;">$0.00</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;">
+            <span>Processing</span><span style="color:var(--muted);">2 Business Days</span>
+          </div>
+        </div>
+
+        <div class="transfer-actions">
+          <button class="btn-submit" onclick="processBillPayment()">Pay Bill</button>
+          <button class="btn-cancel" onclick="navigateTo('dashboard.html')">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCHEDULED PAYMENTS TAB -->
+    <div class="bill-tab-content" id="tab-scheduled">
+      <div style="margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;">
+        <div style="font-size:14px;color:var(--muted);">Upcoming scheduled payments</div>
+      </div>
+      <div class="scheduled-item">
+        <div class="scheduled-item-info">
+          <div class="scheduled-item-name">Mortgage Lender</div>
+          <div class="scheduled-item-date">Next payment: Mar 5, 2026 · Monthly</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;">
+          <div class="scheduled-item-amount">$4,850.00</div>
+          <button class="settings-btn" onclick="alert('Payment cancelled')">Cancel</button>
+        </div>
+      </div>
+      <div class="scheduled-item">
+        <div class="scheduled-item-info">
+          <div class="scheduled-item-name">Electric Company</div>
+          <div class="scheduled-item-date">Next payment: Mar 12, 2026 · Monthly</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;">
+          <div class="scheduled-item-amount">$320.00</div>
+          <button class="settings-btn" onclick="alert('Payment cancelled')">Cancel</button>
+        </div>
+      </div>
+      <div class="scheduled-item">
+        <div class="scheduled-item-info">
+          <div class="scheduled-item-name">Insurance Premium</div>
+          <div class="scheduled-item-date">Next payment: Mar 20, 2026 · Monthly</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;">
+          <div class="scheduled-item-amount">$1,240.00</div>
+          <button class="settings-btn" onclick="alert('Payment cancelled')">Cancel</button>
+        </div>
+      </div>
+      <div class="scheduled-item">
+        <div class="scheduled-item-info">
+          <div class="scheduled-item-name">Internet Provider</div>
+          <div class="scheduled-item-date">Next payment: Mar 28, 2026 · Monthly</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;">
+          <div class="scheduled-item-amount">$189.99</div>
+          <button class="settings-btn" onclick="alert('Payment cancelled')">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAYMENT HISTORY TAB -->
+    <div class="bill-tab-content" id="tab-history">
+      <div style="margin-bottom:20px;">
+        <div style="font-size:14px;color:var(--muted);">Your complete bill payment history</div>
+      </div>
+      <div class="bill-history-table">
+        <div class="bill-history-header">
+          <div>Payee</div>
+          <div>Date</div>
+          <div>Amount</div>
+          <div>Status</div>
+        </div>
+        <div id="billHistoryBody"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- BILL SUCCESS MODAL -->
+<div class="modal-overlay" id="billPaySuccessModal">
+  <div class="modal-content" style="text-align:center;position:relative;max-width:480px;">
+    <div style="width:64px;height:64px;background:#E5F5E5;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:32px;height:32px;"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <div class="dash-title" style="margin-bottom:12px;color:var(--green);">Bill Payment Sent</div>
+    <div class="dash-sub" style="margin-bottom:24px;">Your bill payment has been successfully scheduled.</div>
+    <div style="background:var(--cream);padding:16px;border-radius:4px;margin-bottom:24px;text-align:left;">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;">Processing Time</div>
+      <div style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:8px;">2 Business Days</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.6;">Your payment will be processed within 2 business days. Check your transaction history to monitor the status.</div>
+    </div>
+    <div style="display:flex;gap:12px;">
+      <button class="btn-submit" style="flex:1;" onclick="closeModal('billPaySuccessModal'); navigateTo('transactions.html')">View Transactions</button>
+      <button class="btn-cancel" style="flex:1;" onclick="closeModal('billPaySuccessModal')">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- PROFILE MODAL -->
+<div class="modal-overlay" id="profileModal">
+  <div class="modal-content" style="position:relative;">
+    <button class="modal-close" onclick="closeModal('profileModal')">✕</button>
+    <div class="dash-title" style="margin-bottom:24px;">Edit Profile</div>
+    <div style="text-align:center;margin-bottom:24px;">
+      <div id="profileAvatarPreview" style="width:120px;height:120px;background:var(--gold);border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:48px;font-weight:bold;color:var(--text);cursor:pointer;overflow:hidden;" onclick="document.getElementById('profilePicInput').click();">JW</div>
+      <input type="file" id="profilePicInput" style="display:none;" accept="image/*" onchange="handleProfilePicUpload(event)">
+      <div style="font-size:12px;color:var(--muted);">Click avatar to upload photo</div>
+    </div>
+    <div class="form-group">
+      <div class="form-label">Email</div>
+      <input type="email" class="form-input" id="profileEmail" value="james@verdant.com">
+    </div>
+    <div class="form-group">
+      <div class="form-label">Phone</div>
+      <input type="tel" class="form-input" id="profilePhone" value="+1 (555) 123-4567">
+    </div>
+    <button class="btn-submit" onclick="saveProfile()">Save Changes</button>
+  </div>
+</div>
+
+<script src="shared.js"></script>
+<script src="sidebar.js"></script>
+<script>
+window.ACTIVE_PAGE = 'bill';
+let selectedPayee = '';
+
+const billHistoryData = [
+  { payee:'Mortgage Lender', date:'Feb 5, 2026', amount:'$4,850.00', status:'Completed' },
+  { payee:'Electric Company', date:'Feb 12, 2026', amount:'$298.50', status:'Completed' },
+  { payee:'Insurance Premium', date:'Feb 20, 2026', amount:'$1,240.00', status:'Completed' },
+  { payee:'Internet Provider', date:'Feb 28, 2026', amount:'$189.99', status:'Completed' },
+  { payee:'Mortgage Lender', date:'Jan 5, 2026', amount:'$4,850.00', status:'Completed' },
+  { payee:'Electric Company', date:'Jan 12, 2026', amount:'$312.40', status:'Completed' },
+  { payee:'Water Department', date:'Jan 15, 2026', amount:'$87.20', status:'Completed' },
+  { payee:'Insurance Premium', date:'Jan 20, 2026', amount:'$1,240.00', status:'Completed' },
+  { payee:'Internet Provider', date:'Jan 28, 2026', amount:'$189.99', status:'Completed' },
+  { payee:'Mortgage Lender', date:'Dec 5, 2025', amount:'$4,850.00', status:'Completed' },
+  { payee:'Electric Company', date:'Dec 12, 2025', amount:'$340.80', status:'Completed' },
+  { payee:'Water Department', date:'Dec 15, 2025', amount:'$92.60', status:'Completed' },
+  { payee:'Insurance Premium', date:'Dec 20, 2025', amount:'$1,240.00', status:'Completed' },
+  { payee:'Internet Provider', date:'Dec 28, 2025', amount:'$189.99', status:'Completed' },
+  { payee:'Mortgage Lender', date:'Nov 5, 2025', amount:'$4,850.00', status:'Completed' },
+  { payee:'Electric Company', date:'Nov 12, 2025', amount:'$265.30', status:'Completed' },
+  { payee:'Insurance Premium', date:'Nov 20, 2025', amount:'$1,240.00', status:'Completed' },
+  { payee:'Internet Provider', date:'Nov 28, 2025', amount:'$189.99', status:'Completed' },
+];
+
+document.addEventListener('DOMContentLoaded', () => {
+  initSidebar('bill');
+  // Set today's date as default
+  const dateInput = document.getElementById('billDate');
+  if (dateInput) dateInput.valueAsDate = new Date();
+  renderBillHistory();
+});
+
+function renderBillHistory() {
+  const tbody = document.getElementById('billHistoryBody');
+  if (!tbody) return;
+  tbody.innerHTML = billHistoryData.map(h => `
+    <div class="bill-history-row">
+      <div style="font-weight:500;">${h.payee}</div>
+      <div style="color:var(--muted);">${h.date}</div>
+      <div style="font-family:'DM Mono',monospace;font-weight:600;">${h.amount}</div>
+      <div><span class="history-status completed">${h.status}</span></div>
+    </div>
+  `).join('');
+}
+
+function switchBillTab(tab, el) {
+  document.querySelectorAll('.bill-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.bill-tab-content').forEach(t => t.classList.remove('active'));
+  if (el) el.classList.add('active');
+  const content = document.getElementById('tab-' + tab);
+  if (content) content.classList.add('active');
+}
+
+function selectPayee(el, name) {
+  document.querySelectorAll('.bill-payee-item').forEach(i => {
+    i.style.borderColor = '';
+    i.querySelector('.bill-payee-radio').classList.remove('selected');
+  });
+  el.style.borderColor = 'var(--gold)';
+  el.querySelector('.bill-payee-radio').classList.add('selected');
+  selectedPayee = name;
+  updateBillSummary();
+}
+
+function updateBillSummary() {
+  const amt = document.getElementById('billAmount')?.value || '0';
+  document.getElementById('summaryPayee').textContent = selectedPayee || '—';
+  document.getElementById('summaryAmount').textContent = amt ? '$' + amt : '$0.00';
+}
+
+function processBillPayment() {
+  const amount = document.getElementById('billAmount')?.value;
+  if (!selectedPayee) { showToast('Please select a payee'); return; }
+  if (!amount || parseFloat(amount.replace(/,/g,'')) <= 0) { showToast('Please enter a valid amount'); return; }
+
+  // Add to history
+  const today = new Date().toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+  billHistoryData.unshift({ payee: selectedPayee, date: today, amount: '$' + amount, status: 'Completed' });
+  renderBillHistory();
+  openModal('billPaySuccessModal');
+
+  // Reset form
+  document.getElementById('billAmount').value = '';
+  selectedPayee = '';
+  document.querySelectorAll('.bill-payee-item').forEach(i => {
+    i.style.borderColor = '';
+    i.querySelector('.bill-payee-radio').classList.remove('selected');
+  });
+  updateBillSummary();
+}
+</script>
+</body>
+</html>

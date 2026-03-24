@@ -1,0 +1,1405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saint Trust — Cards</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+/* ========== BASE STYLES ========== */
+* { box-sizing: border-box; }
+
+body { 
+  padding-top: 64px;
+  margin: 0;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.cards-main { 
+  flex: 1; 
+  padding: 48px 56px; 
+  margin-left: 280px;
+  max-width: 1400px;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 28px;
+}
+
+/* ========== CARD PANEL STYLES ========== */
+.card-panel {
+  background: var(--cream); 
+  border: 1px solid var(--border);
+  border-radius: 8px; 
+  padding: 28px; 
+  margin-bottom: 0;
+  transition: all 0.3s ease;
+}
+
+.card-panel:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.card-panel-title {
+  font-family: 'Cormorant Garamond', serif; 
+  font-size: 18px; 
+  font-weight: 400;
+  margin-bottom: 20px; 
+  padding-bottom: 12px; 
+  border-bottom: 1px solid var(--border);
+  word-break: break-word;
+}
+
+.card-status-badge {
+  display: inline-flex; 
+  align-items: center; 
+  gap: 6px;
+  padding: 4px 10px; 
+  border-radius: 99px; 
+  font-size: 11px; 
+  font-weight: 600;
+  letter-spacing: .06em; 
+  text-transform: uppercase;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.card-status-badge.active { 
+  background: #E5F5E5; 
+  color: var(--red); 
+}
+
+.card-status-badge.frozen { 
+  background: #E5E5FF; 
+  color: #5050CC; 
+}
+
+/* ========== CARD VISUAL STYLES ========== */
+.card-visual {
+  background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%);
+  border-radius: 12px;
+  padding: 24px;
+  color: white;
+  margin-bottom: 24px;
+  position: relative;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-family: 'DM Mono', monospace;
+  overflow: hidden;
+}
+
+.card-visual.gold {
+  background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%);
+  color: #1a1a1a;
+}
+
+.card-visual.frozen {
+  opacity: 0.6;
+  filter: grayscale(100%);
+}
+
+.frozen-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(255, 0, 0, 0.9);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: none;
+  z-index: 10;
+}
+
+.card-badge {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.8;
+  margin-bottom: 16px;
+}
+
+.card-chip {
+  width: 50px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  margin-bottom: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.card-number {
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  margin-bottom: 24px;
+  word-break: break-all;
+}
+
+.card-footer-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.card-expiry-label {
+  font-size: 10px;
+  opacity: 0.7;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.card-expiry {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.card-name {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.card-network {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+/* ========== CARD CONTROLS ========== */
+.card-controls {
+  margin-bottom: 24px;
+}
+
+.card-limit-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--text);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.card-limit-bar {
+  width: 100%;
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.card-limit-fill {
+  height: 100%;
+  background: var(--green);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.card-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.card-action-btn {
+  flex: 1;
+  min-width: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: var(--slate);
+  color: var(--ivory);
+  border: none;
+  border-radius: 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.card-action-btn:hover {
+  background: var(--slate2);
+  transform: translateY(-2px);
+}
+
+.card-action-btn:active {
+  transform: translateY(0);
+}
+
+.card-action-btn svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.card-action-btn.freeze-active {
+  background: #ff6b6b;
+}
+
+/* ========== REVEAL SECTION ========== */
+.reveal-section { 
+  background: var(--ivory); 
+  border: 1px solid var(--border); 
+  border-radius: 6px; 
+  padding: 20px; 
+  margin-top: 16px;
+}
+
+.reveal-grid { 
+  display: grid; 
+  grid-template-columns: repeat(2, 1fr); 
+  gap: 16px; 
+  margin-bottom: 16px;
+}
+
+.reveal-item label { 
+  display: block; 
+  font-size: 11px; 
+  color: var(--muted); 
+  letter-spacing: .08em; 
+  text-transform: uppercase; 
+  margin-bottom: 6px;
+}
+
+.reveal-item .val { 
+  font-family: 'DM Mono', monospace; 
+  font-size: 15px; 
+  font-weight: 500;
+  word-break: break-all;
+}
+
+.reveal-item .val.hidden { 
+  filter: blur(4px); 
+  user-select: none; 
+  transition: filter .3s;
+}
+
+.reveal-item .val.visible { 
+  filter: none;
+}
+
+.reveal-btn-main {
+  width: 100%; 
+  padding: 11px; 
+  background: var(--slate); 
+  color: var(--ivory);
+  border: none; 
+  border-radius: 4px; 
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px; 
+  font-weight: 500; 
+  letter-spacing: .08em; 
+  text-transform: uppercase;
+  cursor: pointer; 
+  transition: all .2s;
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  gap: 8px;
+}
+
+.reveal-btn-main:hover { 
+  background: var(--slate2);
+}
+
+.reveal-btn-main svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+/* ========== CARD TRANSACTION SECTION ========== */
+.card-txn-section {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+.card-txn-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--text);
+}
+
+.txn-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.2s ease;
+  padding: 12px 8px;
+  border-radius: 4px;
+}
+
+.txn-item:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.txn-item:last-child {
+  border-bottom: none;
+}
+
+.txn-icon {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.txn-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.txn-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+
+.txn-date {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.txn-amount {
+  font-size: 13px;
+  font-weight: 600;
+  text-align: right;
+  margin-bottom: 2px;
+}
+
+.txn-amount.debit {
+  color: #ff6b6b;
+}
+
+.txn-amount.credit {
+  color: var(--green);
+}
+
+.txn-cat {
+  font-size: 11px;
+  color: var(--muted);
+  text-align: right;
+}
+
+/* ========== DASHBOARD GREETING ========== */
+.dash-greeting {
+  margin-bottom: 32px;
+}
+
+.dash-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px;
+  font-weight: 400;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.dash-sub {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ========== MODAL STYLES ========== */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  padding: 32px;
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--muted);
+  transition: color 0.2s;
+}
+
+.modal-close:hover {
+  color: var(--text);
+}
+
+/* ========== FORM STYLES ========== */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--slate);
+}
+
+.btn-submit {
+  width: 100%;
+  padding: 12px;
+  background: var(--slate);
+  color: var(--ivory);
+  border: none;
+  border-radius: 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-submit:hover {
+  background: var(--slate2);
+}
+
+/* ========== TABLET STYLES (iPad - 768px to 1024px) ========== */
+@media (max-width: 1024px) {
+  .cards-main {
+    padding: 32px 28px;
+    margin-left: 240px;
+  }
+
+  .card-panel {
+    padding: 24px;
+  }
+
+  .card-number {
+    font-size: 18px;
+  }
+
+  .dash-title {
+    font-size: 28px;
+  }
+
+  .reveal-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card-actions {
+    gap: 10px;
+  }
+
+  .card-action-btn {
+    min-width: 120px;
+    padding: 10px 14px;
+    font-size: 11px;
+  }
+}
+
+/* ========== SMALL TABLET / LANDSCAPE PHONE (768px) ========== */
+@media (max-width: 768px) {
+  body {
+    padding-top: 56px;
+  }
+
+  .cards-main {
+    margin-left: 0;
+    padding: 20px 16px;
+  }
+
+  .cards-grid {
+    gap: 20px;
+  }
+
+  .card-panel {
+    padding: 20px;
+  }
+
+  .card-panel-title {
+    font-size: 16px;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+  }
+
+  .card-visual {
+    min-height: 180px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+  }
+
+  .card-badge {
+    font-size: 11px;
+    margin-bottom: 12px;
+  }
+
+  .card-chip {
+    width: 40px;
+    height: 32px;
+    margin-bottom: 12px;
+  }
+
+  .card-number {
+    font-size: 16px;
+    margin-bottom: 20px;
+    letter-spacing: 0.15em;
+  }
+
+  .card-footer-info {
+    font-size: 12px;
+  }
+
+  .card-expiry {
+    font-size: 12px;
+  }
+
+  .card-name {
+    font-size: 10px;
+  }
+
+  .card-network {
+    font-size: 12px;
+  }
+
+  .card-limit-label {
+    font-size: 11px;
+    margin-bottom: 6px;
+  }
+
+  .card-limit-bar {
+    margin-bottom: 16px;
+  }
+
+  .card-actions {
+    gap: 8px;
+    flex-direction: column;
+  }
+
+  .card-action-btn {
+    flex: 1;
+    min-width: 100%;
+    padding: 10px 12px;
+    font-size: 11px;
+    gap: 6px;
+  }
+
+  .card-action-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .reveal-section {
+    padding: 16px;
+    margin-top: 12px;
+  }
+
+  .reveal-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .reveal-item label {
+    font-size: 10px;
+    margin-bottom: 4px;
+  }
+
+  .reveal-item .val {
+    font-size: 13px;
+  }
+
+  .reveal-btn-main {
+    padding: 10px;
+    font-size: 11px;
+    gap: 6px;
+  }
+
+  .reveal-btn-main svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .card-txn-section {
+    margin-top: 20px;
+    padding-top: 20px;
+  }
+
+  .card-txn-title {
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+
+  .txn-item {
+    gap: 10px;
+    padding: 10px 6px;
+  }
+
+  .txn-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .txn-icon svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .txn-name {
+    font-size: 12px;
+  }
+
+  .txn-date {
+    font-size: 10px;
+  }
+
+  .txn-amount {
+    font-size: 12px;
+  }
+
+  .txn-cat {
+    font-size: 10px;
+  }
+
+  .dash-title {
+    font-size: 24px;
+    margin-bottom: 6px;
+  }
+
+  .dash-sub {
+    font-size: 13px;
+  }
+
+  .modal-content {
+    padding: 24px;
+    border-radius: 10px;
+  }
+
+  .modal-close {
+    top: 12px;
+    right: 12px;
+    font-size: 20px;
+  }
+
+  .form-label {
+    font-size: 11px;
+    margin-bottom: 6px;
+  }
+
+  .form-input {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+
+  .btn-submit {
+    padding: 10px;
+    font-size: 11px;
+  }
+}
+
+/* ========== MOBILE PHONE STYLES (480px and below) ========== */
+@media (max-width: 480px) {
+  body {
+    padding-top: 52px;
+  }
+
+  .cards-main {
+    padding: 16px 12px;
+  }
+
+  .cards-grid {
+    gap: 16px;
+  }
+
+  .card-panel {
+    padding: 16px;
+    border-radius: 8px;
+  }
+
+  .card-panel-title {
+    font-size: 14px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+  }
+
+  .card-status-badge {
+    padding: 3px 8px;
+    font-size: 10px;
+  }
+
+  .card-visual {
+    min-height: 160px;
+    padding: 16px;
+    margin-bottom: 16px;
+    border-radius: 8px;
+  }
+
+  .card-badge {
+    font-size: 10px;
+    margin-bottom: 10px;
+  }
+
+  .card-chip {
+    width: 36px;
+    height: 28px;
+    margin-bottom: 10px;
+  }
+
+  .card-number {
+    font-size: 14px;
+    margin-bottom: 16px;
+    letter-spacing: 0.12em;
+  }
+
+  .card-footer-info {
+    font-size: 11px;
+    gap: 8px;
+  }
+
+  .card-expiry-label {
+    font-size: 9px;
+  }
+
+  .card-expiry {
+    font-size: 11px;
+  }
+
+  .card-name {
+    font-size: 9px;
+  }
+
+  .card-network {
+    font-size: 11px;
+  }
+
+  .card-limit-label {
+    font-size: 10px;
+    margin-bottom: 4px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .card-limit-bar {
+    margin-bottom: 12px;
+    height: 5px;
+  }
+
+  .card-actions {
+    gap: 6px;
+    flex-direction: column;
+  }
+
+  .card-action-btn {
+    min-width: 100%;
+    padding: 9px 10px;
+    font-size: 10px;
+    gap: 5px;
+    border-radius: 5px;
+  }
+
+  .card-action-btn svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .reveal-section {
+    padding: 12px;
+    margin-top: 10px;
+    border-radius: 5px;
+  }
+
+  .reveal-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .reveal-item label {
+    font-size: 9px;
+    margin-bottom: 3px;
+  }
+
+  .reveal-item .val {
+    font-size: 12px;
+  }
+
+  .reveal-btn-main {
+    padding: 9px;
+    font-size: 10px;
+    gap: 5px;
+    border-radius: 5px;
+  }
+
+  .reveal-btn-main svg {
+    width: 11px;
+    height: 11px;
+  }
+
+  .card-txn-section {
+    margin-top: 16px;
+    padding-top: 16px;
+  }
+
+  .card-txn-title {
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+
+  .txn-item {
+    gap: 8px;
+    padding: 8px 4px;
+  }
+
+  .txn-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .txn-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .txn-name {
+    font-size: 11px;
+  }
+
+  .txn-date {
+    font-size: 9px;
+  }
+
+  .txn-amount {
+    font-size: 11px;
+  }
+
+  .txn-cat {
+    font-size: 9px;
+  }
+
+  .dash-greeting {
+    margin-bottom: 24px;
+  }
+
+  .dash-title {
+    font-size: 20px;
+    margin-bottom: 4px;
+  }
+
+  .dash-sub {
+    font-size: 12px;
+  }
+
+  .modal-overlay {
+    padding: 12px;
+  }
+
+  .modal-content {
+    padding: 20px;
+    border-radius: 8px;
+    max-height: 85vh;
+  }
+
+  .modal-close {
+    top: 10px;
+    right: 10px;
+    font-size: 18px;
+  }
+
+  .form-group {
+    margin-bottom: 16px;
+  }
+
+  .form-label {
+    font-size: 10px;
+    margin-bottom: 5px;
+  }
+
+  .form-input {
+    padding: 7px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+  }
+
+  .btn-submit {
+    padding: 9px;
+    font-size: 10px;
+    border-radius: 5px;
+  }
+
+  /* Stack header elements better on mobile */
+  .card-panel > div:first-child {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .card-panel-title {
+    margin-bottom: 8px;
+  }
+}
+
+/* ========== EXTRA SMALL PHONES (320px and below) ========== */
+@media (max-width: 360px) {
+  .cards-main {
+    padding: 12px 8px;
+  }
+
+  .card-panel {
+    padding: 12px;
+  }
+
+  .card-visual {
+    min-height: 140px;
+    padding: 12px;
+  }
+
+  .card-number {
+    font-size: 12px;
+    letter-spacing: 0.1em;
+  }
+
+  .dash-title {
+    font-size: 18px;
+  }
+
+  .card-panel-title {
+    font-size: 13px;
+  }
+
+  .card-actions {
+    gap: 4px;
+  }
+
+  .card-action-btn {
+    padding: 8px 8px;
+    font-size: 9px;
+  }
+}
+
+/* ========== PRINT STYLES ========== */
+@media print {
+  body {
+    padding: 0;
+  }
+
+  .cards-main {
+    margin-left: 0;
+    padding: 0;
+  }
+
+  .modal-overlay {
+    display: none !important;
+  }
+
+  .card-panel {
+    page-break-inside: avoid;
+    margin-bottom: 20px;
+  }
+}
+</style>
+</head>
+<body>
+
+<div id="pageLoadOverlay">
+  <div class="page-loader">
+    <div class="page-loader-logo">Saint <em>Trust</em></div>
+    <div class="page-loader-bar"><div class="page-loader-fill"></div></div>
+  </div>
+</div>
+
+<div class="topbar">
+  <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleSidebar()"><span></span><span></span><span></span></button>
+  <a class="topbar-logo" href="index.html">Saint <em>Trust</em></a>
+  <nav class="topbar-nav" id="topNav" style="display:none;"></nav>
+  <div class="topbar-right">
+    <span style="font-size:12px;color:rgba(247,244,238,.5);font-family:'DM Mono',monospace;letter-spacing:.06em;">David Duncan</span>
+    <button class="btn-ghost" onclick="signOut()">Sign Out</button>
+  </div>
+</div>
+
+<div class="dashboard-layout">
+  <div class="sidebar" id="mainSidebar"></div>
+
+  <div class="cards-main">
+    <div class="dash-greeting">
+      <div class="dash-title">Cards</div>
+      <div class="dash-sub">Manage your Saint Trust payment cards.</div>
+    </div>
+
+    <div class="cards-grid">
+
+      <!-- CARD 1 -->
+      <div>
+        <div class="card-panel">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px;">
+            <div class="card-panel-title" style="margin:0;border:none;padding:0;flex:1;min-width:200px;">Saint Trust Signature Card</div>
+            <span class="card-status-badge active" id="card1StatusBadge">● Not Active</span>
+          </div>
+
+          <!-- Visual Card -->
+          <div class="card-visual" id="card1Visual">
+            <div class="frozen-badge" id="card1FrozenBadge">Frozen</div>
+            <div class="card-badge">Saint Trust Private</div>
+            <div class="card-chip"></div>
+            <div class="card-number" id="card1NumberDisplay">•••• •••• •••• 3847</div>
+            <div class="card-footer-info">
+              <div>
+                <div class="card-expiry-label">Valid Thru</div>
+                <div class="card-expiry">09/28</div>
+                <div class="card-name">DAVID DUNCAN</div>
+              </div>
+              <div class="card-network">VISA</div>
+            </div>
+          </div>
+
+          <!-- Limit Bar -->
+          <div class="card-controls">
+            <div class="card-limit-label">
+              <span>Monthly Spend</span>
+              <span>$0 / $100,000</span>
+            </div>
+            <div class="card-limit-bar">
+              <div class="card-limit-fill" style="width:43.5%"></div>
+            </div>
+            <!-- Actions: Details + Freeze only (no Manage) -->
+            <div class="card-actions">
+              <button class="card-action-btn" onclick="toggleCardDetails('card1')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                <span id="card1DetailsLabel">Details</span>
+              </button>
+              <button class="card-action-btn" id="card1FreezeBtn" onclick="toggleFreeze('card1')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07"/></svg>
+                <span id="card1FreezeLabel">Freeze Card</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Details Reveal Section -->
+          <div class="reveal-section" id="card1Details" style="display:none;">
+            <div style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;">Card Information</div>
+            <div class="reveal-grid">
+              <div class="reveal-item" style="grid-column:1/-1;">
+                <label>Full Card Number</label>
+                <div class="val hidden" id="card1FullNumber">4532 1847 3920 3847</div>
+              </div>
+              <div class="reveal-item">
+                <label>Expiry Date</label>
+                <div class="val hidden" id="card1Expiry">09/28</div>
+              </div>
+              <div class="reveal-item">
+                <label>CVV</label>
+                <div class="val hidden" id="card1CVV">472</div>
+              </div>
+              <div class="reveal-item">
+                <label>Billing ZIP</label>
+                <div class="val hidden" id="card1ZIP">10001</div>
+              </div>
+              <div class="reveal-item">
+                <label>Card Network</label>
+                <div class="val visible">Visa Signature</div>
+              </div>
+            </div>
+            <button class="reveal-btn-main" id="card1RevealBtn" onclick="revealCardDetails('card1')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              Show Card Details
+            </button>
+            <div style="font-size:11px;color:var(--muted);margin-top:10px;text-align:center;">Details will be hidden automatically after 30 seconds.</div>
+          </div>
+
+          <!-- Recent Transactions -->
+          <div class="card-txn-section">
+            <div class="card-txn-title">Recent Transactions</div>
+            <div id="card1Txn"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 2 -->
+      <div>
+        <div class="card-panel">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px;">
+            <div class="card-panel-title" style="margin:0;border:none;padding:0;flex:1;min-width:200px;">Verdant Gold Reserve Card</div>
+            <span class="card-status-badge active" id="card2StatusBadge">● Not Active</span>
+          </div>
+
+          <div class="card-visual gold" id="card2Visual">
+            <div class="frozen-badge" id="card2FrozenBadge">Frozen</div>
+            <div class="card-badge">Verdant Gold Reserve</div>
+            <div class="card-chip"></div>
+            <div class="card-number" id="card2NumberDisplay">•••• •••• •••• 2847</div>
+            <div class="card-footer-info">
+              <div>
+                <div class="card-expiry-label">Valid Thru</div>
+                <div class="card-expiry">03/27</div>
+                <div class="card-name">DAVID DUNCAN</div>
+              </div>
+              <div class="card-network">MC</div>
+            </div>
+          </div>
+
+          <div class="card-controls">
+            <div class="card-limit-label">
+              <span>Monthly Spend</span>
+              <span>$0 / $75,000</span>
+            </div>
+            <div class="card-limit-bar">
+              <div class="card-limit-fill" style="width:38.5%;background:var(--gold2)"></div>
+            </div>
+            <div class="card-actions">
+              <button class="card-action-btn" onclick="toggleCardDetails('card2')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                <span id="card2DetailsLabel">Details</span>
+              </button>
+              <button class="card-action-btn" id="card2FreezeBtn" onclick="toggleFreeze('card2')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07"/></svg>
+                <span id="card2FreezeLabel">Freeze Card</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Details Reveal Section -->
+          <div class="reveal-section" id="card2Details" style="display:none;">
+            <div style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;">Card Information</div>
+            <div class="reveal-grid">
+              <div class="reveal-item" style="grid-column:1/-1;">
+                <label>Full Card Number</label>
+                <div class="val hidden" id="card2FullNumber">5412 7530 8291 2847</div>
+              </div>
+              <div class="reveal-item">
+                <label>Expiry Date</label>
+                <div class="val hidden" id="card2Expiry">03/27</div>
+              </div>
+              <div class="reveal-item">
+                <label>CVV</label>
+                <div class="val hidden" id="card2CVV">839</div>
+              </div>
+              <div class="reveal-item">
+                <label>Billing ZIP</label>
+                <div class="val hidden" id="card2ZIP">10001</div>
+              </div>
+              <div class="reveal-item">
+                <label>Card Network</label>
+                <div class="val visible">Mastercard World Elite</div>
+              </div>
+            </div>
+            <button class="reveal-btn-main" id="card2RevealBtn" onclick="revealCardDetails('card2')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              Show Card Details
+            </button>
+            <div style="font-size:11px;color:var(--muted);margin-top:10px;text-align:center;">Details will be hidden automatically after 30 seconds.</div>
+          </div>
+
+          <div class="card-txn-section">
+            <div class="card-txn-title">Recent Transactions</div>
+            <div id="card2Txn"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- TRANSACTION MODAL -->
+<div class="modal-overlay" id="transactionModal">
+  <div class="modal-content" style="position:relative;">
+    <button class="modal-close" onclick="closeModal('transactionModal')">✕</button>
+    <div class="dash-title" style="margin-bottom:24px;">Transaction Details</div>
+    <div id="transactionDetails"></div>
+  </div>
+</div>
+
+<!-- PROFILE MODAL -->
+<div class="modal-overlay" id="profileModal">
+  <div class="modal-content" style="position:relative;">
+    <button class="modal-close" onclick="closeModal('profileModal')">✕</button>
+    <div class="dash-title" style="margin-bottom:24px;">Edit Profile</div>
+    <div style="text-align:center;margin-bottom:24px;">
+      <div id="profileAvatarPreview" style="width:120px;height:120px;background:var(--gold);border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:48px;font-weight:bold;color:var(--text);cursor:pointer;overflow:hidden;" onclick="document.getElementById('profilePicInput').click();">JW</div>
+      <input type="file" id="profilePicInput" style="display:none;" accept="image/*" onchange="handleProfilePicUpload(event)">
+      <div style="font-size:12px;color:var(--muted);">Click avatar to upload photo</div>
+    </div>
+    <div class="form-group">
+      <div class="form-label">Email</div>
+      <input type="email" class="form-input" id="profileEmail" value="james@verdant.com">
+    </div>
+    <div class="form-group">
+      <div class="form-label">Phone</div>
+      <input type="tel" class="form-input" id="profilePhone" value="+1 (555) 123-4567">
+    </div>
+    <button class="btn-submit" onclick="saveProfile()">Save Changes</button>
+  </div>
+</div>
+
+<script src="shared.js"></script>
+<script src="sidebar.js"></script>
+<script>
+window.ACTIVE_PAGE = 'cards';
+const cardFrozenState = { card1: false, card2: false };
+const cardDetailsVisible = { card1: false, card2: false };
+let revealTimers = {};
+
+document.addEventListener('DOMContentLoaded', () => {
+  initSidebar('cards');
+  renderCardTransactions();
+});
+
+function renderCardTransactions() {
+  const recent = allTransactionsData.filter(t => t.dateObj.getFullYear() === 2026).slice(0, 3);
+  const html = recent.map(t => `
+    <div class="txn-item" onclick="showTransactionDetails(${t.id})">
+      <div class="txn-icon" style="background:${getIconColor(t.cat)};width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;">${getIconSVG(t.icon)}</div>
+      <div>
+        <div class="txn-name">${t.name}</div>
+        <div class="txn-date">${t.date}</div>
+      </div>
+      <div style="text-align:right;margin-left:auto">
+        <div class="txn-amount ${t.type}">${t.amount}</div>
+        <div class="txn-cat">${t.cat}</div>
+      </div>
+    </div>
+  `).join('');
+  const c1 = document.getElementById('card1Txn');
+  const c2 = document.getElementById('card2Txn');
+  if (c1) c1.innerHTML = html;
+  if (c2) c2.innerHTML = html;
+}
+
+function toggleCardDetails(cardId) {
+  const section = document.getElementById(cardId + 'Details');
+  const label = document.getElementById(cardId + 'DetailsLabel');
+  const visible = cardDetailsVisible[cardId];
+  if (!visible) {
+    section.style.display = 'block';
+    label.textContent = 'Hide Details';
+    cardDetailsVisible[cardId] = true;
+  } else {
+    section.style.display = 'none';
+    label.textContent = 'Details';
+    cardDetailsVisible[cardId] = false;
+    hideCardNumbers(cardId);
+  }
+}
+
+function revealCardDetails(cardId) {
+  const fields = [cardId+'FullNumber', cardId+'Expiry', cardId+'CVV', cardId+'ZIP'];
+  fields.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.classList.remove('hidden'); el.classList.add('visible'); }
+  });
+  const btn = document.getElementById(cardId + 'RevealBtn');
+  if (btn) {
+    btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg> Hide Details`;
+    btn.onclick = () => hideCardNumbers(cardId);
+  }
+  // Auto-hide after 30s
+  clearTimeout(revealTimers[cardId]);
+  revealTimers[cardId] = setTimeout(() => hideCardNumbers(cardId), 30000);
+}
+
+function hideCardNumbers(cardId) {
+  const fields = [cardId+'FullNumber', cardId+'Expiry', cardId+'CVV', cardId+'ZIP'];
+  fields.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.classList.add('hidden'); el.classList.remove('visible'); }
+  });
+  const btn = document.getElementById(cardId + 'RevealBtn');
+  if (btn) {
+    btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Show Card Details`;
+    btn.onclick = () => revealCardDetails(cardId);
+  }
+  clearTimeout(revealTimers[cardId]);
+}
+
+function toggleFreeze(cardId) {
+  const isFrozen = cardFrozenState[cardId];
+  cardFrozenState[cardId] = !isFrozen;
+  const visual = document.getElementById(cardId + 'Visual');
+  const frozenBadge = document.getElementById(cardId + 'FrozenBadge');
+  const statusBadge = document.getElementById(cardId + 'StatusBadge');
+  const freezeLabel = document.getElementById(cardId + 'FreezeLabel');
+  const freezeBtn = document.getElementById(cardId + 'FreezeBtn');
+
+  if (cardFrozenState[cardId]) {
+    visual.classList.add('frozen');
+    frozenBadge.style.display = 'block';
+    statusBadge.className = 'card-status-badge frozen';
+    statusBadge.textContent = '● Frozen';
+    freezeLabel.textContent = 'Unfreeze Card';
+    freezeBtn.classList.add('freeze-active');
+    showToast('Card frozen successfully. No transactions will be processed.');
+  } else {
+    visual.classList.remove('frozen');
+    frozenBadge.style.display = 'none';
+    statusBadge.className = 'card-status-badge active';
+    statusBadge.textContent = '● Active';
+    freezeLabel.textContent = 'Freeze Card';
+    freezeBtn.classList.remove('freeze-active');
+    showToast('Card unfrozen. Transactions are now enabled.');
+  }
+}
+</script>
+</body>
+</html>

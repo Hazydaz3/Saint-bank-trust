@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saint Trust — Settings</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+body { padding-top:64px; }
+.settings-main { flex:1; padding:48px 56px; margin-left:280px; }
+@media(max-width:768px){ .settings-main{ margin-left:0; padding:20px; } }
+
+.settings-nav { display:flex; gap:0; border-bottom:1px solid var(--border); margin-bottom:32px; flex-wrap:wrap; }
+.settings-nav-item {
+  padding:12px 24px; font-size:13px; font-weight:500; letter-spacing:.04em;
+  cursor:pointer; border-bottom:2px solid transparent; color:var(--muted);
+  transition:all .2s; text-transform:uppercase;
+}
+.settings-nav-item:hover { color:var(--text); }
+.settings-nav-item.active { color:var(--text); border-bottom-color:var(--gold); }
+
+.settings-section { display:none; }
+.settings-section.active { display:block; animation: pgIn .3s ease both; }
+@keyframes pgIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+
+.settings-card {
+  background:var(--cream); border:1px solid var(--border); border-radius:8px;
+  padding:28px; margin-bottom:24px;
+}
+.settings-card-title {
+  font-family:'Cormorant Garamond',serif; font-size:20px; font-weight:400;
+  margin-bottom:20px; padding-bottom:12px; border-bottom:1px solid var(--border);
+}
+.toggle-row {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:14px 0; border-bottom:1px solid var(--border);
+}
+.toggle-row:last-child { border-bottom:none; }
+.toggle-info { flex:1; }
+.toggle-label { font-size:14px; font-weight:500; margin-bottom:2px; }
+.toggle-desc { font-size:12px; color:var(--muted); line-height:1.5; }
+.toggle-switch {
+  position:relative; width:44px; height:24px; cursor:pointer;
+  flex-shrink:0; margin-left:16px;
+}
+.toggle-switch input { opacity:0; width:0; height:0; }
+.toggle-slider {
+  position:absolute; top:0; left:0; right:0; bottom:0;
+  background:#ccc; border-radius:24px; transition:.3s;
+}
+.toggle-slider::before {
+  content:''; position:absolute; width:18px; height:18px;
+  left:3px; bottom:3px; background:white; border-radius:50%; transition:.3s;
+}
+.toggle-switch input:checked + .toggle-slider { background:var(--gold2); }
+.toggle-switch input:checked + .toggle-slider::before { transform:translateX(20px); }
+
+.security-item {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:16px 0; border-bottom:1px solid var(--border);
+}
+.security-item:last-child { border-bottom:none; }
+.security-item-info { flex:1; }
+.security-item-title { font-size:14px; font-weight:500; margin-bottom:2px; }
+.security-item-desc { font-size:12px; color:var(--muted); line-height:1.5; }
+.security-badge { display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:99px; font-size:11px; font-weight:600; }
+.security-badge.enabled { background:#E5F5E5; color:var(--green); }
+.security-badge.disabled { background:#FEE; color:var(--red); }
+.security-badge.info { background:#E5E5FF; color:#5050CC; }
+</style>
+</head>
+<body>
+
+<div id="pageLoadOverlay">
+  <div class="page-loader">
+    <div class="page-loader-logo">Saint <em>Trust</em></div>
+    <div class="page-loader-bar"><div class="page-loader-fill"></div></div>
+  </div>
+</div>
+
+<div class="topbar">
+  <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleSidebar()"><span></span><span></span><span></span></button>
+  <a class="topbar-logo" href="index.html">Saint <em>Trust</em></a>
+  <nav class="topbar-nav" id="topNav" style="display:none;"></nav>
+  <div class="topbar-right">
+    <span style="font-size:12px;color:rgba(247,244,238,.5);font-family:'DM Mono',monospace;letter-spacing:.06em;">David Duncan</span>
+    <button class="btn-ghost" onclick="signOut()">Sign Out</button>
+  </div>
+</div>
+
+<div class="dashboard-layout">
+  <div class="sidebar" id="mainSidebar"></div>
+
+  <div class="settings-main">
+    <div class="dash-greeting">
+      <div class="dash-title">Settings</div>
+      <div class="dash-sub">Manage your account preferences and security settings.</div>
+    </div>
+
+    <div class="settings-nav">
+      <div class="settings-nav-item active" onclick="switchSettingsTab('profile',this)">Profile</div>
+      <div class="settings-nav-item" onclick="switchSettingsTab('security',this)">Security</div>
+      <div class="settings-nav-item" onclick="switchSettingsTab('notifications',this)">Notifications</div>
+    </div>
+
+    <!-- PROFILE TAB -->
+    <div class="settings-section active" id="section-profile">
+      <div class="settings-card">
+        <div class="settings-card-title">Contact Information</div>
+        <div class="form-group">
+          <div class="form-label">Email Address</div>
+          <input type="email" class="form-input" id="settingsEmail" placeholder="james@verdant.com">
+          <div style="font-size:11px;color:var(--muted);margin-top:6px;">Used for account notifications and statements.</div>
+        </div>
+        <div class="form-group">
+          <div class="form-label">Phone Number</div>
+          <input type="tel" class="form-input" id="settingsPhone" placeholder="+1 (826) 230-8037">
+          <div style="font-size:11px;color:var(--muted);margin-top:6px;">Used for two-factor authentication and fraud alerts.</div>
+        </div>
+        <button class="btn-submit" onclick="saveContactInfo()">Save Contact Info</button>
+      </div>
+
+      <div class="settings-card">
+        <div class="settings-card-title">Mailing Address</div>
+        <div class="form-group">
+          <div class="form-label">Street Address</div>
+          <input type="text" class="form-input" id="settingsAddress" placeholder="">
+        </div>
+        <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px;">
+          <div class="form-group">
+            <div class="form-label">City</div>
+            <input type="text" class="form-input" placeholder="">
+          </div>
+          <div class="form-group">
+            <div class="form-label">State</div>
+            <input type="text" class="form-input" placeholder="">
+          </div>
+          <div class="form-group">
+            <div class="form-label">ZIP Code</div>
+            <input type="text" class="form-input" placeholder="">
+          </div>
+        </div>
+        <button class="btn-submit" onclick="showToast('Address updated successfully')">Update Address</button>
+      </div>
+    </div>
+
+    <!-- SECURITY TAB -->
+    <div class="settings-section" id="section-security">
+      <div class="settings-card">
+        <div class="settings-card-title">Authentication</div>
+        <div class="security-item">
+          <div class="security-item-info">
+            <div class="security-item-title">Two-Factor Authentication (2FA)</div>
+            <div class="security-item-desc">Require a verification code every time you sign in from a new device.</div>
+          </div>
+          <span class="security-badge enabled">● Enabled</span>
+        </div>
+        <div class="security-item">
+          <div class="security-item-info">
+            <div class="security-item-title">Biometric Login</div>
+            <div class="security-item-desc">Use Face ID or Touch ID to sign in on supported devices.</div>
+          </div>
+          <span class="security-badge enabled">● Enabled</span>
+        </div>
+        <div class="security-item">
+          <div class="security-item-info">
+            <div class="security-item-title">Login Alerts</div>
+            <div class="security-item-desc">Receive an email whenever your account is accessed from a new device or location.</div>
+          </div>
+          <span class="security-badge enabled">● Enabled</span>
+        </div>
+      </div>
+
+      <div class="settings-card">
+        <div class="settings-card-title">Change Password</div>
+        <div class="form-group">
+          <div class="form-label">Current Password</div>
+          <input type="password" class="form-input" id="currentPwd" placeholder="••••••••••••">
+        </div>
+        <div class="form-group">
+          <div class="form-label">New Password</div>
+          <input type="password" class="form-input" id="newPwd" placeholder="At least 12 characters">
+        </div>
+        <div class="form-group">
+          <div class="form-label">Confirm New Password</div>
+          <input type="password" class="form-input" id="confirmPwd" placeholder="Repeat new password">
+        </div>
+        <div style="background:var(--ivory);border:1px solid var(--border);border-radius:4px;padding:12px 16px;margin-bottom:20px;">
+          <div style="font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:600;">Password Requirements</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.8;">
+            ✓ At least 12 characters long<br>
+            ✓ Contains uppercase and lowercase letters<br>
+            ✓ Contains at least one number<br>
+            ✓ Contains at least one special character
+          </div>
+        </div>
+        <button class="btn-submit" onclick="changePassword()">Update Password</button>
+      </div>
+
+      <div class="settings-card">
+        <div class="settings-card-title">Active Sessions</div>
+        <div class="security-item">
+          <div class="security-item-info">
+            <div class="security-item-title">Chrome on MacBook Pro</div>
+            <div class="security-item-desc">New York, NY · Current session · Last active now</div>
+          </div>
+          <span class="security-badge info">Current</span>
+        </div>
+        <div class="security-item">
+          <div class="security-item-info">
+            <div class="security-item-title">Safari on iPhone 15 Pro</div>
+            <div class="security-item-desc">New York, NY · Last active 2 hours ago</div>
+          </div>
+          <button class="settings-btn" onclick="showToast('Session terminated')">Revoke</button>
+        </div>
+        <div class="security-item">
+          <div class="security-item-info">
+            <div class="security-item-title">Chrome on Windows PC</div>
+            <div class="security-item-desc">Chicago, IL · Last active 3 days ago</div>
+          </div>
+          <button class="settings-btn" onclick="showToast('Session terminated')">Revoke</button>
+        </div>
+        <div style="margin-top:16px;">
+          <button class="btn-cancel" onclick="showToast('All other sessions have been terminated')">Sign Out All Other Devices</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- NOTIFICATIONS TAB -->
+    <div class="settings-section" id="section-notifications">
+      <div class="settings-card">
+        <div class="settings-card-title">Transaction Alerts</div>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-label">Large Transaction Alert</div>
+            <div class="toggle-desc">Get notified when a transaction exceeds $1,000</div>
+          </div>
+          <label class="toggle-switch"><input type="checkbox" checked onchange="showToast('Preference saved')"><span class="toggle-slider"></span></label>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-label">Debit Notifications</div>
+            <div class="toggle-desc">Receive alerts for every debit from your accounts</div>
+          </div>
+          <label class="toggle-switch"><input type="checkbox" checked onchange="showToast('Preference saved')"><span class="toggle-slider"></span></label>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-label">Credit Notifications</div>
+            <div class="toggle-desc">Receive alerts when funds are deposited</div>
+          </div>
+          <label class="toggle-switch"><input type="checkbox" checked onchange="showToast('Preference saved')"><span class="toggle-slider"></span></label>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-label">International Transactions</div>
+            <div class="toggle-desc">Alert when a transaction is made outside the United States</div>
+          </div>
+          <label class="toggle-switch"><input type="checkbox" checked onchange="showToast('Preference saved')"><span class="toggle-slider"></span></label>
+        </div>
+      </div>
+
+      <div class="settings-card">
+        <div class="settings-card-title">Account Notifications</div>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-label">Monthly Statements</div>
+            <div class="toggle-desc">Email notification when your monthly statement is ready</div>
+          </div>
+          <label class="toggle-switch"><input type="checkbox" checked onchange="showToast('Preference saved')"><span class="toggle-slider"></span></label>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-label">Bill Payment Reminders</div>
+            <div class="toggle-desc">Reminders 3 days before scheduled bill payments</div>
+          </div>
+          <label class="toggle-switch"><input type="checkbox" checked onchange="showToast('Preference saved')"><span class="toggle-slider"></span></label>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-label">Investment Updates</div>
+            <div class="toggle-desc">Weekly portfolio performance summary</div>
+          </div>
+          <label class="toggle-switch"><input type="checkbox" onchange="showToast('Preference saved')"><span class="toggle-slider"></span></label>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-label">Security Alerts</div>
+            <div class="toggle-desc">Immediate notification of suspicious activity</div>
+          </div>
+          <label class="toggle-switch"><input type="checkbox" checked onchange="showToast('Preference saved')"><span class="toggle-slider"></span></label>
+        </div>
+      </div>
+
+      <div class="settings-card">
+        <div class="settings-card-title">Notification Channels</div>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-label">Email Notifications</div>
+            <div class="toggle-desc">Receive notifications at james@verdant.com</div>
+          </div>
+          <label class="toggle-switch"><input type="checkbox" checked onchange="showToast('Preference saved')"><span class="toggle-slider"></span></label>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-label">SMS Notifications</div>
+            <div class="toggle-desc">Receive text messages at +1 (826) 230-8037</div>
+          </div>
+          <label class="toggle-switch"><input type="checkbox" checked onchange="showToast('Preference saved')"><span class="toggle-slider"></span></label>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-label">Push Notifications</div>
+            <div class="toggle-desc">In-app and browser push notifications</div>
+          </div>
+          <label class="toggle-switch"><input type="checkbox" onchange="showToast('Preference saved')"><span class="toggle-slider"></span></label>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- PROFILE MODAL -->
+<div class="modal-overlay" id="profileModal">
+  <div class="modal-content" style="position:relative;">
+    <button class="modal-close" onclick="closeModal('profileModal')">✕</button>
+    <div class="dash-title" style="margin-bottom:24px;">Edit Profile</div>
+    <div style="text-align:center;margin-bottom:24px;">
+      <div id="profileAvatarPreview" style="width:120px;height:120px;background:var(--gold);border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:48px;font-weight:bold;color:var(--text);cursor:pointer;overflow:hidden;" onclick="document.getElementById('profilePicInput').click();">JW</div>
+      <input type="file" id="profilePicInput" style="display:none;" accept="image/*" onchange="handleProfilePicUpload(event)">
+      <div style="font-size:12px;color:var(--muted);">Click avatar to upload photo</div>
+    </div>
+    <div class="form-group">
+      <div class="form-label">Email</div>
+      <input type="email" class="form-input" id="profileEmail" value="james@verdant.com">
+    </div>
+    <div class="form-group">
+      <div class="form-label">Phone</div>
+      <input type="tel" class="form-input" id="profilePhone" value="+1 (555) 123-4567">
+    </div>
+    <button class="btn-submit" onclick="saveProfile()">Save Changes</button>
+  </div>
+</div>
+
+<script src="shared.js"></script>
+<script src="sidebar.js"></script>
+<script>
+window.ACTIVE_PAGE = 'settings';
+
+document.addEventListener('DOMContentLoaded', () => {
+  initSidebar('settings');
+  // Pre-fill saved values
+  const email = localStorage.getItem('verdantEmail') || 'james@verdant.com';
+  const phone = localStorage.getItem('verdantPhone') || '+1 (555) 123-4567';
+  document.getElementById('settingsEmail').value = email;
+  document.getElementById('settingsPhone').value = phone;
+});
+
+function switchSettingsTab(tab, el) {
+  document.querySelectorAll('.settings-nav-item').forEach(i => i.classList.remove('active'));
+  document.querySelectorAll('.settings-section').forEach(s => s.classList.remove('active'));
+  if (el) el.classList.add('active');
+  const section = document.getElementById('section-' + tab);
+  if (section) section.classList.add('active');
+}
+
+function saveContactInfo() {
+  const email = document.getElementById('settingsEmail').value;
+  const phone = document.getElementById('settingsPhone').value;
+  if (email) localStorage.setItem('verdantEmail', email);
+  if (phone) localStorage.setItem('verdantPhone', phone);
+  showToast('Contact information updated successfully');
+}
+
+function changePassword() {
+  const current = document.getElementById('currentPwd').value;
+  const newPwd = document.getElementById('newPwd').value;
+  const confirm = document.getElementById('confirmPwd').value;
+  if (!current) { showToast('Please enter your current password'); return; }
+  if (newPwd.length < 12) { showToast('New password must be at least 12 characters'); return; }
+  if (newPwd !== confirm) { showToast('Passwords do not match'); return; }
+  document.getElementById('currentPwd').value = '';
+  document.getElementById('newPwd').value = '';
+  document.getElementById('confirmPwd').value = '';
+  showToast('Password updated successfully');
+}
+</script>
+</body>
+</html>

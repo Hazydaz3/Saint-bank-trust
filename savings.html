@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saint Trust — Savings Goals</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+body { padding-top:64px; }
+.savings-main { flex:1; padding:48px 56px; margin-left:280px; }
+@media(max-width:768px){ .savings-main{ margin-left:0; padding:20px; } }
+.goal-card { background:var(--cream); border:1px solid var(--border); border-radius:8px; padding:24px; margin-bottom:20px; }
+.goal-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px; }
+.goal-name { font-family:'Cormorant Garamond',serif; font-size:20px; font-weight:400; }
+.goal-emoji { font-size:28px; }
+.goal-amounts { display:flex; justify-content:space-between; font-size:13px; color:var(--muted); margin-bottom:8px; }
+.goal-bar { height:8px; background:var(--border); border-radius:4px; overflow:hidden; margin-bottom:12px; }
+.goal-bar-fill { height:100%; border-radius:4px; transition:width .5s; }
+.goal-meta { display:flex; gap:24px; font-size:12px; color:var(--muted); }
+</style>
+</head>
+<body>
+
+<div id="pageLoadOverlay">
+  <div class="page-loader">
+    <div class="page-loader-logo">Saint <em>Trust</em></div>
+    <div class="page-loader-bar"><div class="page-loader-fill"></div></div>
+  </div>
+</div>
+
+<div class="topbar">
+  <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleSidebar()"><span></span><span></span><span></span></button>
+  <a class="topbar-logo" href="index.html">Saint <em>Trust</em></a>
+  <nav class="topbar-nav" id="topNav" style="display:none;"></nav>
+  <div class="topbar-right">
+    <span style="font-size:12px;color:rgba(247,244,238,.5);font-family:'DM Mono',monospace;letter-spacing:.06em;">David Duncan</span>
+    <button class="btn-ghost" onclick="signOut()">Sign Out</button>
+  </div>
+</div>
+
+<div class="dashboard-layout">
+  <div class="sidebar" id="mainSidebar"></div>
+
+  <div class="savings-main">
+    <div class="dash-greeting">
+      <div class="dash-title">Savings Goals</div>
+      <div class="dash-sub">Track your progress toward your financial goals.</div>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+      <div style="font-size:14px;color:var(--muted);">4 active goals</div>
+      <button class="btn-submit" style="padding:10px 20px;" onclick="showToast('Feature coming soon')">+ New Goal</button>
+    </div>
+
+    <div class="goal-card">
+      <div class="goal-header">
+        <div><div class="goal-name">Vacation Home — Hamptons</div><div style="font-size:13px;color:var(--muted);margin-top:4px;">Target: Dec 31, 2026</div></div>
+        <div class="goal-emoji">🏡</div>
+      </div>
+      <div class="goal-amounts"><span>$1,850,000 saved</span><span>Goal: $3,500,000</span></div>
+      <div class="goal-bar"><div class="goal-bar-fill" style="width:52.9%;background:var(--gold2);"></div></div>
+      <div class="goal-meta"><span>52.9% complete</span><span>$1,650,000 remaining</span><span>Auto-save: $50,000/mo</span></div>
+    </div>
+
+    <div class="goal-card">
+      <div class="goal-header">
+        <div><div class="goal-name">Emergency Reserve Fund</div><div style="font-size:13px;color:var(--muted);margin-top:4px;">Target: Jun 30, 2026</div></div>
+        <div class="goal-emoji">🛡️</div>
+      </div>
+      <div class="goal-amounts"><span>$480,000 saved</span><span>Goal: $500,000</span></div>
+      <div class="goal-bar"><div class="goal-bar-fill" style="width:96%;background:var(--green);"></div></div>
+      <div class="goal-meta"><span>96% complete</span><span>$20,000 remaining</span><span>Auto-save: $10,000/mo</span></div>
+    </div>
+
+    <div class="goal-card">
+      <div class="goal-header">
+        <div><div class="goal-name">Private Jet Charter Fund</div><div style="font-size:13px;color:var(--muted);margin-top:4px;">Target: Sep 1, 2026</div></div>
+        <div class="goal-emoji">✈️</div>
+      </div>
+      <div class="goal-amounts"><span>$120,000 saved</span><span>Goal: $250,000</span></div>
+      <div class="goal-bar"><div class="goal-bar-fill" style="width:48%;background:#9C27B0;"></div></div>
+      <div class="goal-meta"><span>48% complete</span><span>$130,000 remaining</span><span>Auto-save: $20,000/mo</span></div>
+    </div>
+
+    <div class="goal-card">
+      <div class="goal-header">
+        <div><div class="goal-name">Charitable Foundation</div><div style="font-size:13px;color:var(--muted);margin-top:4px;">Target: Dec 31, 2027</div></div>
+        <div class="goal-emoji">🌱</div>
+      </div>
+      <div class="goal-amounts"><span>$2,100,000 saved</span><span>Goal: $10,000,000</span></div>
+      <div class="goal-bar"><div class="goal-bar-fill" style="width:21%;background:#2196F3;"></div></div>
+      <div class="goal-meta"><span>21% complete</span><span>$7,900,000 remaining</span><span>Auto-save: $100,000/mo</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- PROFILE MODAL -->
+<div class="modal-overlay" id="profileModal">
+  <div class="modal-content" style="position:relative;">
+    <button class="modal-close" onclick="closeModal('profileModal')">✕</button>
+    <div class="dash-title" style="margin-bottom:24px;">Edit Profile</div>
+    <div style="text-align:center;margin-bottom:24px;">
+      <div id="profileAvatarPreview" style="width:120px;height:120px;background:var(--gold);border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:48px;font-weight:bold;color:var(--text);cursor:pointer;overflow:hidden;" onclick="document.getElementById('profilePicInput').click();">JW</div>
+      <input type="file" id="profilePicInput" style="display:none;" accept="image/*" onchange="handleProfilePicUpload(event)">
+      <div style="font-size:12px;color:var(--muted);">Click avatar to upload photo</div>
+    </div>
+    <div class="form-group">
+      <div class="form-label">Email</div>
+      <input type="email" class="form-input" id="profileEmail" value="james@verdant.com">
+    </div>
+    <div class="form-group">
+      <div class="form-label">Phone</div>
+      <input type="tel" class="form-input" id="profilePhone" value="+1 (555) 123-4567">
+    </div>
+    <button class="btn-submit" onclick="saveProfile()">Save Changes</button>
+  </div>
+</div>
+
+<script src="shared.js"></script>
+<script src="sidebar.js"></script>
+<script>
+window.ACTIVE_PAGE = 'savings';
+document.addEventListener('DOMContentLoaded', () => { initSidebar('savings'); });
+</script>
+</body>
+</html>

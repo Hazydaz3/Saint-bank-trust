@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saint Trust — Transfer</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+/* ========== BASE STYLES ========== */
+* { box-sizing: border-box; }
+
+body { 
+  padding-top: 64px;
+  margin: 0;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.transfer-main { 
+  flex: 1; 
+  padding: 48px 56px; 
+  margin-left: 280px;
+  max-width: 1400px;
+}
+
+.transfer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 32px;
+}
+
+/* ========== FORM CARD STYLES ========== */
+.transfer-form-card {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 32px;
+}
+
+.form-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px;
+  font-weight: 400;
+  margin-bottom: 28px;
+  color: var(--text);
+}
+
+.form-section {
+  margin-bottom: 28px;
+}
+
+.form-section-title {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.form-input,
+.form-select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: var(--text);
+  background: white;
+  transition: border-color 0.2s;
+}
+
+.form-input:focus,
+.form-select:focus {
+  outline: none;
+  border-color: var(--slate);
+}
+
+.form-select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 32px;
+}
+
+/* ========== TRANSFER SUMMARY BOX ========== */
+.transfer-summary-box {
+  background: var(--ivory);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.summary-label {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 8px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.summary-row.total {
+  font-weight: 600;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.summary-value {
+  font-family: 'DM Mono', monospace;
+  font-weight: 600;
+}
+
+.summary-time {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  margin-top: 8px;
+  color: var(--muted);
+}
+
+/* ========== ACTION BUTTONS ========== */
+.transfer-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-submit,
+.btn-cancel {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 4px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-submit {
+  background: var(--slate);
+  color: var(--ivory);
+}
+
+.btn-submit:hover {
+  background: var(--slate2);
+}
+
+.btn-cancel {
+  background: var(--border);
+  color: var(--text);
+}
+
+.btn-cancel:hover {
+  background: var(--muted);
+}
+
+/* ========== SIDEBAR PANELS ========== */
+.transfer-recent {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 24px;
+  height: fit-content;
+}
+
+.panel-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  font-weight: 400;
+  margin-bottom: 16px;
+  color: var(--text);
+}
+
+.recipient-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-bottom: 8px;
+}
+
+.recipient-item:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.recipient-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+  flex-shrink: 0;
+}
+
+.recipient-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+
+.recipient-bank {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* ========== MODAL STYLES ========== */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  padding: 32px;
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--muted);
+  transition: color 0.2s;
+}
+
+.modal-close:hover {
+  color: var(--text);
+}
+
+/* ========== PIN MODAL STYLES ========== */
+.pin-modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 2000;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.pin-modal-overlay.show {
+  display: flex;
+}
+
+.pin-modal-content {
+  background: var(--ivory);
+  padding: 32px;
+  border-radius: 8px;
+  max-width: 400px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.pin-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--text);
+}
+
+.pin-subtitle {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 24px;
+}
+
+.pin-inputs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.pin-input {
+  width: 50px;
+  height: 50px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 600;
+  font-family: 'DM Mono', monospace;
+  transition: border-color 0.2s;
+}
+
+.pin-input:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+
+.pin-error {
+  display: none;
+  background: #FEE;
+  border: 1px solid #F0CCCC;
+  border-radius: 4px;
+  padding: 12px;
+  margin-bottom: 16px;
+  font-size: 12px;
+  color: var(--red);
+}
+
+.pin-error.show {
+  display: block;
+}
+
+.pin-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.pin-btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 12px;
+}
+
+.pin-btn-confirm {
+  background: var(--slate);
+  color: var(--ivory);
+}
+
+.pin-btn-confirm:hover {
+  background: var(--slate2);
+}
+
+.pin-btn-cancel {
+  background: var(--border);
+  color: var(--text);
+}
+
+.pin-btn-cancel:hover {
+  background: var(--muted);
+}
+
+/* ========== DASHBOARD GREETING ========== */
+.dash-greeting {
+  margin-bottom: 32px;
+}
+
+.dash-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px;
+  font-weight: 400;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.dash-sub {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ========== TRANSFER SUCCESS STYLES ========== */
+.success-icon {
+  width: 64px;
+  height: 64px;
+  background: #FFF3CD;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+}
+
+.success-icon svg {
+  width: 32px;
+  height: 32px;
+  color: #FF9800;
+}
+
+.success-notice {
+  background: var(--cream);
+  padding: 16px;
+  border-radius: 4px;
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.notice-label {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 8px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.notice-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.notice-text {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.transfer-details {
+  background: var(--ivory);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 16px;
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.wire-confirm-num {
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* ========== TABLET STYLES (iPad - 768px to 1024px) ========== */
+@media (max-width: 1024px) {
+  .transfer-main {
+    padding: 32px 28px;
+    margin-left: 240px;
+  }
+
+  .transfer-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .transfer-form-card {
+    padding: 24px;
+  }
+
+  .transfer-recent {
+    padding: 20px;
+  }
+
+  .form-title {
+    font-size: 22px;
+  }
+
+  .dash-title {
+    font-size: 28px;
+  }
+
+  .pin-modal-content {
+    padding: 28px;
+  }
+
+  .modal-content {
+    padding: 28px;
+  }
+}
+
+/* ========== SMALL TABLET / LANDSCAPE PHONE (768px) ========== */
+@media (max-width: 768px) {
+  body {
+    padding-top: 56px;
+  }
+
+  .transfer-main {
+    margin-left: 0;
+    padding: 20px 16px;
+  }
+
+  .transfer-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .transfer-form-card {
+    padding: 20px;
+  }
+
+  .transfer-recent {
+    padding: 16px;
+  }
+
+  .form-title {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+
+  .form-section {
+    margin-bottom: 20px;
+  }
+
+  .form-section-title {
+    font-size: 11px;
+    margin-bottom: 12px;
+  }
+
+  .form-group {
+    margin-bottom: 14px;
+  }
+
+  .form-label {
+    font-size: 11px;
+    margin-bottom: 6px;
+  }
+
+  .form-input,
+  .form-select {
+    padding: 9px 10px;
+    font-size: 13px;
+    border-radius: 4px;
+  }
+
+  .transfer-summary-box {
+    padding: 14px;
+    margin-bottom: 20px;
+  }
+
+  .summary-label {
+    font-size: 11px;
+    margin-bottom: 6px;
+  }
+
+  .summary-row {
+    font-size: 12px;
+    margin-bottom: 4px;
+  }
+
+  .summary-time {
+    font-size: 11px;
+    margin-top: 6px;
+  }
+
+  .transfer-actions {
+    gap: 10px;
+  }
+
+  .btn-submit,
+  .btn-cancel {
+    padding: 10px;
+    font-size: 11px;
+  }
+
+  .panel-title {
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+
+  .recipient-item {
+    padding: 10px;
+    margin-bottom: 6px;
+  }
+
+  .recipient-avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 11px;
+  }
+
+  .recipient-name {
+    font-size: 12px;
+  }
+
+  .recipient-bank {
+    font-size: 10px;
+  }
+
+  .pin-modal-content {
+    padding: 24px;
+  }
+
+  .pin-title {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+
+  .pin-subtitle {
+    font-size: 12px;
+    margin-bottom: 20px;
+  }
+
+  .pin-inputs {
+    gap: 6px;
+    margin-bottom: 20px;
+  }
+
+  .pin-input {
+    width: 45px;
+    height: 45px;
+    font-size: 20px;
+  }
+
+  .pin-error {
+    padding: 10px;
+    margin-bottom: 14px;
+    font-size: 11px;
+  }
+
+  .pin-buttons {
+    gap: 10px;
+  }
+
+  .pin-btn {
+    padding: 10px;
+    font-size: 10px;
+  }
+
+  .modal-content {
+    padding: 24px;
+    border-radius: 10px;
+  }
+
+  .modal-close {
+    top: 12px;
+    right: 12px;
+    font-size: 20px;
+  }
+
+  .dash-title {
+    font-size: 24px;
+    margin-bottom: 6px;
+  }
+
+  .dash-sub {
+    font-size: 13px;
+  }
+
+  .success-icon {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 16px;
+  }
+
+  .success-icon svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  .success-notice {
+    padding: 14px;
+    margin-bottom: 20px;
+  }
+
+  .notice-label {
+    font-size: 11px;
+    margin-bottom: 6px;
+  }
+
+  .notice-title {
+    font-size: 14px;
+    margin-bottom: 6px;
+  }
+
+  .notice-text {
+    font-size: 12px;
+  }
+
+  .transfer-details {
+    padding: 14px;
+    margin-bottom: 20px;
+  }
+
+  .wire-confirm-num {
+    font-size: 11px;
+  }
+}
+
+/* ========== MOBILE PHONE STYLES (480px and below) ========== */
+@media (max-width: 480px) {
+  body {
+    padding-top: 52px;
+  }
+
+  .transfer-main {
+    padding: 16px 12px;
+  }
+
+  .transfer-grid {
+    gap: 16px;
+  }
+
+  .transfer-form-card {
+    padding: 16px;
+    border-radius: 8px;
+  }
+
+  .transfer-recent {
+    padding: 12px;
+    border-radius: 8px;
+  }
+
+  .form-title {
+    font-size: 18px;
+    margin-bottom: 16px;
+  }
+
+  .form-section {
+    margin-bottom: 16px;
+  }
+
+  .form-section-title {
+    font-size: 10px;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+  }
+
+  .form-group {
+    margin-bottom: 12px;
+  }
+
+  .form-label {
+    font-size: 10px;
+    margin-bottom: 5px;
+  }
+
+  .form-input,
+  .form-select {
+    padding: 8px 10px;
+    font-size: 12px;
+    border-radius: 4px;
+  }
+
+  .transfer-summary-box {
+    padding: 12px;
+    margin-bottom: 16px;
+  }
+
+  .summary-label {
+    font-size: 10px;
+    margin-bottom: 4px;
+  }
+
+  .summary-row {
+    font-size: 11px;
+    margin-bottom: 3px;
+  }
+
+  .summary-time {
+    font-size: 10px;
+    margin-top: 4px;
+  }
+
+  .transfer-actions {
+    gap: 8px;
+    flex-direction: column;
+  }
+
+  .btn-submit,
+  .btn-cancel {
+    padding: 10px;
+    font-size: 10px;
+    width: 100%;
+  }
+
+  .panel-title {
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+
+  .recipient-item {
+    padding: 8px;
+    margin-bottom: 4px;
+    gap: 10px;
+  }
+
+  .recipient-avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 10px;
+  }
+
+  .recipient-name {
+    font-size: 11px;
+  }
+
+  .recipient-bank {
+    font-size: 9px;
+  }
+
+  .pin-modal-overlay {
+    padding: 12px;
+  }
+
+  .pin-modal-content {
+    padding: 20px;
+    border-radius: 8px;
+  }
+
+  .pin-title {
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+
+  .pin-subtitle {
+    font-size: 11px;
+    margin-bottom: 16px;
+  }
+
+  .pin-inputs {
+    gap: 4px;
+    margin-bottom: 16px;
+  }
+
+  .pin-input {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+    border-radius: 4px;
+  }
+
+  .pin-error {
+    padding: 8px;
+    margin-bottom: 12px;
+    font-size: 10px;
+  }
+
+  .pin-buttons {
+    gap: 8px;
+  }
+
+  .pin-btn {
+    padding: 9px;
+    font-size: 9px;
+    border-radius: 4px;
+  }
+
+  .modal-overlay {
+    padding: 12px;
+  }
+
+  .modal-content {
+    padding: 20px;
+    border-radius: 8px;
+    max-height: 85vh;
+  }
+
+  .modal-close {
+    top: 10px;
+    right: 10px;
+    font-size: 18px;
+  }
+
+  .dash-greeting {
+    margin-bottom: 20px;
+  }
+
+  .dash-title {
+    font-size: 20px;
+    margin-bottom: 4px;
+  }
+
+  .dash-sub {
+    font-size: 12px;
+  }
+
+  .success-icon {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 12px;
+  }
+
+  .success-icon svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .success-notice {
+    padding: 12px;
+    margin-bottom: 16px;
+  }
+
+  .notice-label {
+    font-size: 10px;
+    margin-bottom: 4px;
+  }
+
+  .notice-title {
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+
+  .notice-text {
+    font-size: 11px;
+  }
+
+  .transfer-details {
+    padding: 12px;
+    margin-bottom: 16px;
+  }
+
+  .wire-confirm-num {
+    font-size: 10px;
+  }
+}
+
+/* ========== EXTRA SMALL PHONES (320px and below) ========== */
+@media (max-width: 360px) {
+  .transfer-main {
+    padding: 12px 8px;
+  }
+
+  .transfer-form-card {
+    padding: 12px;
+  }
+
+  .transfer-recent {
+    padding: 10px;
+  }
+
+  .form-title {
+    font-size: 16px;
+  }
+
+  .dash-title {
+    font-size: 18px;
+  }
+
+  .pin-modal-content {
+    padding: 16px;
+  }
+
+  .pin-input {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+  }
+
+  .transfer-actions {
+    flex-direction: column;
+  }
+
+  .btn-submit,
+  .btn-cancel {
+    width: 100%;
+  }
+}
+
+/* ========== PRINT STYLES ========== */
+@media print {
+  body {
+    padding: 0;
+  }
+
+  .transfer-main {
+    margin-left: 0;
+    padding: 0;
+  }
+
+  .modal-overlay,
+  .pin-modal-overlay {
+    display: none !important;
+  }
+
+  .transfer-form-card {
+    page-break-inside: avoid;
+  }
+}
+</style>
+</head>
+<body>
+
+<div id="pageLoadOverlay">
+  <div class="page-loader">
+    <div class="page-loader-logo">Saint <em>Trust</em></div>
+    <div class="page-loader-bar"><div class="page-loader-fill"></div></div>
+  </div>
+</div>
+
+<div class="topbar">
+  <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleSidebar()"><span></span><span></span><span></span></button>
+  <a class="topbar-logo" href="index.html">Saint <em>Trust</em></a>
+  <nav class="topbar-nav" id="topNav" style="display:none;"></nav>
+  <div class="topbar-right">
+    <span style="font-size:12px;color:rgba(247,244,238,.5);font-family:'DM Mono',monospace;letter-spacing:.06em;">David Duncan</span>
+    <button class="btn-ghost" onclick="signOut()">Sign Out</button>
+  </div>
+</div>
+
+<div class="dashboard-layout">
+  <div class="sidebar" id="mainSidebar"></div>
+
+  <div class="transfer-main">
+    <div class="dash-greeting">
+      <div class="dash-title">Transfer Funds</div>
+      <div class="dash-sub">Send money securely to any account.</div>
+    </div>
+
+    <div class="transfer-grid">
+      <div class="transfer-form-card">
+        <div class="form-title">New Transfer</div>
+
+        <div class="form-section">
+          <div class="form-section-title">From Account</div>
+          <div class="form-group">
+            <div class="form-label">Source Account</div>
+            <select class="form-select" id="fromAccount">
+              <option value="checking">Primary Checking (•••• 3847) — $225,000.00</option>
+              <option value="savings">High-Yield Savings (•••• 2847) — $125,000.00</option>
+              <option value="investment">Investment Account (•••• 5920) — $550,000.00</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-title">To Account</div>
+          <div class="form-group">
+            <div class="form-label">Recipient Name</div>
+            <input type="text" class="form-input" id="recipientName" placeholder="Full name">
+          </div>
+          <div class="form-group">
+            <div class="form-label">Bank Name</div>
+            <input type="text" class="form-input" id="bankName" placeholder="e.g. Chase Bank">
+          </div>
+          <div class="form-group">
+            <div class="form-label">Routing Number</div>
+            <input type="text" class="form-input" id="routingNumber" placeholder="9-digit routing number" maxlength="9" oninput="this.value=this.value.replace(/\D/g,'')">
+          </div>
+          <div class="form-group">
+            <div class="form-label">Account Number</div>
+            <input type="text" class="form-input" id="accountNumber" placeholder="Account number" oninput="this.value=this.value.replace(/\D/g,'')">
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-title">Transfer Details</div>
+          <div class="form-group">
+            <div class="form-label">Amount</div>
+            <input type="text" class="form-input" id="transferAmount" placeholder="0.00">
+          </div>
+          <div class="form-group">
+            <div class="form-label">Transfer Type</div>
+            <select class="form-select" id="transferType" onchange="updateTransferSummary()">
+              <option value="ach">ACH Transfer (2-3 Business Days — Free)</option>
+              <option value="wire">Wire Transfer (Same Day — $25 Fee)</option>
+              <option value="internal">Internal Transfer (Instant — Free)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <div class="form-label">Memo (Optional)</div>
+            <input type="text" class="form-input" id="transferMemo" placeholder="e.g. Rent payment">
+          </div>
+        </div>
+
+        <div class="transfer-summary-box" id="transferSummaryBox">
+          <div class="summary-label">Transfer Summary</div>
+          <div class="summary-row">
+            <span>Amount</span><span class="summary-value" id="summaryTransferAmount">$0.00</span>
+          </div>
+          <div class="summary-row">
+            <span>Fee</span><span class="summary-value" id="summaryFee">$0.00</span>
+          </div>
+          <div class="summary-row total">
+            <span>Total Deducted</span><span class="summary-value" id="summaryTotal">$0.00</span>
+          </div>
+          <div class="summary-time">
+            <span>Processing Time</span><span id="summaryTime">2-3 Business Days</span>
+          </div>
+        </div>
+
+        <div class="transfer-actions">
+          <button class="btn-submit" onclick="processTransfer()">Send Transfer</button>
+          <button class="btn-cancel" onclick="navigateTo('dashboard.html')">Cancel</button>
+        </div>
+      </div>
+
+      <div class="transfer-recent">
+        <div class="panel-title">Recent Recipients</div>
+        <div id="recentRecipients"></div>
+        
+        <div class="panel-title" style="margin-bottom:16px;margin-top:28px;">Transfer Limits</div>
+        <div style="background:var(--cream);border:1px solid var(--border);border-radius:4px;padding:16px;">
+          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px;">
+            <span>Daily ACH Limit</span><span style="font-family:'DM Mono',monospace;font-weight:600;">$10,000</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px;">
+            <span>Daily Wire Limit</span><span style="font-family:'DM Mono',monospace;font-weight:600;">$50,000</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;">
+            <span>Monthly Limit</span><span style="font-family:'DM Mono',monospace;font-weight:600;">$500,000</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PIN VERIFICATION MODAL -->
+<div class="pin-modal-overlay" id="pinModalOverlay">
+  <div class="pin-modal-content">
+    <div class="pin-title">Verify with PIN</div>
+    <div class="pin-subtitle">Enter your 4-digit PIN to confirm this transfer</div>
+    <div class="pin-error" id="pinError"></div>
+    <div class="pin-inputs">
+      <input type="password" class="pin-input" id="pin0" maxlength="1">
+      <input type="password" class="pin-input" id="pin1" maxlength="1">
+      <input type="password" class="pin-input" id="pin2" maxlength="1">
+      <input type="password" class="pin-input" id="pin3" maxlength="1">
+    </div>
+    <div class="pin-buttons">
+      <button class="pin-btn pin-btn-confirm" onclick="confirmTransferWithPIN()">Confirm</button>
+      <button class="pin-btn pin-btn-cancel" onclick="closePINModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- TRANSFER SUCCESS MODAL -->
+<div class="modal-overlay" id="transferSuccessModal">
+  <div class="modal-content" style="text-align:center;position:relative;max-width:480px;">
+    <div class="success-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#FF9800" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    </div>
+    <div class="dash-title" style="margin-bottom:12px;color:#FF9800;">Transfer Pending</div>
+    <div class="dash-sub" style="margin-bottom:24px;" id="transferSuccessSubtitle">Your transfer has been successfully initiated.</div>
+    <div class="success-notice">
+      <div class="notice-label">Important Notice</div>
+      <div class="notice-title" id="transferTimeNotice">Payment will be completed after 2-3 business days</div>
+      <div class="notice-text" id="transferTimeDetail">Your transfer is now pending. The payment will be completed and reviewed within 2-3 business days. You can track the status in your transaction history.</div>
+    </div>
+    <div class="transfer-details" id="transferSummaryDetails"></div>
+    <div style="display:flex;gap:12px;flex-direction:column;">
+      <button class="btn-submit" onclick="viewTransactionDetails()">View Transaction</button>
+      <button class="btn-cancel" onclick="closeModal('transferSuccessModal')">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- PROFILE MODAL -->
+<div class="modal-overlay" id="profileModal">
+  <div class="modal-content" style="position:relative;">
+    <button class="modal-close" onclick="closeModal('profileModal')">✕</button>
+    <div class="dash-title" style="margin-bottom:24px;">Edit Profile</div>
+    <div style="text-align:center;margin-bottom:24px;">
+      <div id="profileAvatarPreview" style="width:120px;height:120px;background:var(--gold);border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:48px;font-weight:bold;color:var(--text);cursor:pointer;overflow:hidden;" onclick="document.getElementById('profilePicInput').click();">DD</div>
+      <input type="file" id="profilePicInput" style="display:none;" accept="image/*" onchange="handleProfilePicUpload(event)">
+      <div style="font-size:12px;color:var(--muted);">Click avatar to upload photo</div>
+    </div>
+    <div class="form-group">
+      <div class="form-label">Email</div>
+      <input type="email" class="form-input" id="profileEmail" value="david@sainttrust.com">
+    </div>
+    <div class="form-group">
+      <div class="form-label">Phone</div>
+      <input type="tel" class="form-input" id="profilePhone" value="+1 (555) 123-4567">
+    </div>
+    <button class="btn-submit" onclick="saveProfile()">Save Changes</button>
+  </div>
+</div>
+
+<script src="auth.js"></script>
+<script src="shared.js"></script>
+<script src="sidebar.js"></script>
+<script>
+window.ACTIVE_PAGE = 'transfer';
+let pendingTransferData = null;
+let lastCreatedTransactionId = null;
+
+const recentRecipientsData = [
+  { name:'John Smith', bank:'Chase Bank', account:'•••• 4821', initials:'JS', color:'#4A6741' },
+  { name:'Sarah Johnson', bank:'Bank of America', account:'•••• 7293', initials:'SJ', color:'#B8963E' },
+  { name:'Michael Chen', bank:'Wells Fargo', account:'•••• 5501', initials:'MC', color:'#2C3E50' },
+  { name:'Emily Davis', bank:'Citibank', account:'•••• 3388', initials:'ED', color:'#8E44AD' },
+];
+
+document.addEventListener('DOMContentLoaded', () => {
+  requireAuth();
+  initSidebar('transfer');
+  renderRecentRecipients();
+  updateTransferSummary();
+  setupPINInputs();
+  setupAmountInput();
+});
+
+function setupAmountInput() {
+  const input = document.getElementById('transferAmount');
+  if (!input) return;
+  
+  input.addEventListener('input', function() {
+    let value = this.value.replace(/,/g, '');
+    value = value.replace(/[^0-9.]/g, '');
+    
+    const parts = value.split('.');
+    if (parts.length > 2) {
+      value = parts[0] + '.' + parts[1];
+    }
+    
+    this.value = value;
+    updateTransferSummary();
+  });
+  
+  input.addEventListener('blur', function() {
+    if (this.value === '') return;
+    
+    let value = this.value.replace(/,/g, '');
+    const numValue = parseFloat(value);
+    
+    if (!isNaN(numValue) && numValue > 0) {
+      this.value = numValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    }
+  });
+}
+
+function renderRecentRecipients() {
+  const container = document.getElementById('recentRecipients');
+  if (!container) return;
+  container.innerHTML = recentRecipientsData.map(r => `
+    <div class="recipient-item" onclick="fillRecipient('${r.name}','${r.bank}')">
+      <div class="recipient-avatar" style="background:${r.color};">${r.initials}</div>
+      <div>
+        <div class="recipient-name">${r.name}</div>
+        <div class="recipient-bank">${r.bank} · ${r.account}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function fillRecipient(name, bank) {
+  document.getElementById('recipientName').value = name;
+  document.getElementById('bankName').value = bank;
+}
+
+function updateTransferSummary() {
+  const amountInput = document.getElementById('transferAmount').value.replace(/,/g, '');
+  const amt = parseFloat(amountInput) || 0;
+  const type = document.getElementById('transferType')?.value || 'ach';
+  const fee = type === 'wire' ? 25 : 0;
+  const total = amt + fee;
+  const time = type === 'wire' ? 'Same Day' : type === 'internal' ? 'Instant' : '2-3 Business Days';
+  
+  document.getElementById('summaryTransferAmount').textContent = '$' + amt.toLocaleString('en-US', {minimumFractionDigits:2});
+  document.getElementById('summaryFee').textContent = '$' + fee.toFixed(2);
+  document.getElementById('summaryTotal').textContent = '$' + total.toLocaleString('en-US', {minimumFractionDigits:2});
+  document.getElementById('summaryTime').textContent = time;
+}
+
+function processTransfer() {
+  const name = document.getElementById('recipientName').value.trim();
+  const routing = document.getElementById('routingNumber').value.trim();
+  const account = document.getElementById('accountNumber').value.trim();
+  const amount = document.getElementById('transferAmount').value.trim();
+  const type = document.getElementById('transferType').value;
+  const memo = document.getElementById('transferMemo').value.trim();
+  const fromAccount = document.getElementById('fromAccount').value;
+
+  if (!name) { showToast('Please enter recipient name'); return; }
+  if (!routing || routing.length !== 9) { showToast('Please enter a valid 9-digit routing number'); return; }
+  if (!account) { showToast('Please enter account number'); return; }
+  if (!amount || parseFloat(amount.replace(/,/g,'')) <= 0) { showToast('Please enter a valid amount'); return; }
+
+  pendingTransferData = {
+    name,
+    routing,
+    account,
+    amount: parseFloat(amount.replace(/,/g,'')),
+    type,
+    memo,
+    fromAccount
+  };
+
+  document.getElementById('pinModalOverlay').classList.add('show');
+  document.getElementById('pin0').focus();
+}
+
+function setupPINInputs() {
+  for (let i = 0; i < 4; i++) {
+    const input = document.getElementById('pin' + i);
+    input.addEventListener('input', (e) => {
+      if (e.target.value.length > 0 && i < 3) {
+        document.getElementById('pin' + (i + 1)).focus();
+      }
+    });
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace' && e.target.value.length === 0 && i > 0) {
+        document.getElementById('pin' + (i - 1)).focus();
+      }
+    });
+  }
+}
+
+async function confirmTransferWithPIN() {
+  if (!pendingTransferData) return;
+
+  let pin = '';
+  for (let i = 0; i < 4; i++) {
+    pin += document.getElementById('pin' + i).value;
+  }
+
+  if (pin.length !== 4) {
+    document.getElementById('pinError').textContent = 'Please enter complete PIN';
+    document.getElementById('pinError').classList.add('show');
+    return;
+  }
+
+  try {
+    await verifyPIN(pin);
+
+    const result = await processTransfer(
+      pendingTransferData.fromAccount,
+      pendingTransferData.amount,
+      pendingTransferData.name,
+      pendingTransferData.type === 'internal' ? 'Saint Trust Internal' : pendingTransferData.type === 'wire' ? 'Wire Transfer' : 'ACH Transfer',
+      pendingTransferData.memo
+    );
+
+    if (result && result.transaction) {
+      lastCreatedTransactionId = result.transaction.id;
+    }
+
+    closePINModal();
+    showTransferSuccess(pendingTransferData);
+
+  } catch (error) {
+    document.getElementById('pinError').textContent = error.message || 'PIN verification failed';
+    document.getElementById('pinError').classList.add('show');
+    for (let i = 0; i < 4; i++) {
+      document.getElementById('pin' + i).value = '';
+    }
+    document.getElementById('pin0').focus();
+  }
+}
+
+async function viewTransactionDetails() {
+  closeModal('transferSuccessModal');
+  if (lastCreatedTransactionId) {
+    sessionStorage.setItem('highlightTransactionId', lastCreatedTransactionId);
+    sessionStorage.setItem('forceRefresh', 'true');
+  }
+  navigateTo('transactions.html');
+}
+
+function showTransferSuccess(data) {
+  const fee = data.type === 'wire' ? 25 : 0;
+  const total = data.amount + fee;
+  const timeNotice = 'Payment will be completed after 2-3 business days';
+  const timeDetail = 'Your transfer is now pending. The payment will be completed and reviewed within 2-3 business days. You can track the status in your transaction history.';
+
+  const confirmNum = 'STR' + Date.now().toString().slice(-8).toUpperCase();
+
+  document.getElementById('transferTimeNotice').textContent = timeNotice;
+  document.getElementById('transferTimeDetail').textContent = timeDetail;
+  document.getElementById('transferSuccessSubtitle').textContent = `Your transfer to ${data.name} has been successfully initiated.`;
+  document.getElementById('transferSummaryDetails').innerHTML = `
+    <div class="notice-label">Transfer Details</div>
+    <div class="summary-row"><span>Recipient</span><span style="font-weight:500;">${data.name}</span></div>
+    <div class="summary-row"><span>Amount</span><span class="summary-value">$${data.amount.toLocaleString('en-US',{minimumFractionDigits:2})}</span></div>
+    ${fee > 0 ? `<div class="summary-row"><span>Wire Fee</span><span class="summary-value">$${fee.toFixed(2)}</span></div>` : ''}
+    <div class="summary-row total"><span>Total</span><span class="summary-value">$${total.toLocaleString('en-US',{minimumFractionDigits:2})}</span></div>
+    ${data.memo ? `<div style="margin-top:8px;font-size:12px;color:var(--muted);">Memo: ${data.memo}</div>` : ''}
+    <div class="wire-confirm-num">Confirmation #: <strong>${confirmNum}</strong> &nbsp;·&nbsp; Save this for your records.</div>
+  `;
+
+  openModal('transferSuccessModal');
+
+  document.getElementById('recipientName').value = '';
+  document.getElementById('bankName').value = '';
+  document.getElementById('routingNumber').value = '';
+  document.getElementById('accountNumber').value = '';
+  document.getElementById('transferAmount').value = '';
+  document.getElementById('transferMemo').value = '';
+  updateTransferSummary();
+  pendingTransferData = null;
+}
+
+function closePINModal() {
+  document.getElementById('pinModalOverlay').classList.remove('show');
+  document.getElementById('pinError').classList.remove('show');
+  document.getElementById('pinError').textContent = '';
+  for (let i = 0; i < 4; i++) {
+    document.getElementById('pin' + i).value = '';
+  }
+}
+
+document.addEventListener('click', (e) => {
+  if (e.target === document.getElementById('pinModalOverlay')) {
+    closePINModal();
+  }
+});
+</script>
+</body>
+</html>
