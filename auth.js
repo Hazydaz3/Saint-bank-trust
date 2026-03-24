@@ -2,7 +2,7 @@
    SAINT TRUST — AUTHENTICATION SYSTEM
    ═══════════════════════════════════════════ */
 
-const API_BASE = 'http://localhost:3001';
+const API_BASE = 'https://saint-bank-trust.onrender.com';
 
 // ── CHECK IF USER IS AUTHENTICATED ──
 function isAuthenticated() {
