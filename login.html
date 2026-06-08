@@ -177,14 +177,15 @@
         <div class="auth-form-title">Verify your identity</div>
         <div class="auth-form-sub">Enter the code from your authenticator app</div>
         <div class="auth-error" id="authError"></div>
-        <div class="otp-inputs">
-          <input type="text" class="otp-input" id="otp0" maxlength="1">
-          <input type="text" class="otp-input" id="otp1" maxlength="1">
-          <input type="text" class="otp-input" id="otp2" maxlength="1">
-          <input type="text" class="otp-input" id="otp3" maxlength="1">
-          <input type="text" class="otp-input" id="otp4" maxlength="1">
-          <input type="text" class="otp-input" id="otp5" maxlength="1">
-        </div>
+      <div class="otp-inputs">
+  <input type="text" class="otp-input" id="otp0" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code">
+  <input type="text" class="otp-input" id="otp1" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+  <input type="text" class="otp-input" id="otp2" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+  <input type="text" class="otp-input" id="otp3" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+  <input type="text" class="otp-input" id="otp4" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+  <input type="text" class="otp-input" id="otp5" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+</div>
+
         <div class="auth-timer">Code expires in <span class="auth-timer-count" id="authTimerCount">30</span>s</div>
         <button class="btn-verify" id="verifyBtn" onclick="handleVerify()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
