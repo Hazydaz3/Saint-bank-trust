@@ -1155,12 +1155,13 @@ body {
     <div class="pin-title">Verify with PIN</div>
     <div class="pin-subtitle">Enter your 4-digit PIN to confirm this transfer</div>
     <div class="pin-error" id="pinError"></div>
-    <div class="pin-inputs">
-      <input type="password" class="pin-input" id="pin0" maxlength="1">
-      <input type="password" class="pin-input" id="pin1" maxlength="1">
-      <input type="password" class="pin-input" id="pin2" maxlength="1">
-      <input type="password" class="pin-input" id="pin3" maxlength="1">
-    </div>
+  <div class="pin-inputs">
+  <input type="password" class="pin-input" id="pin0" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+  <input type="password" class="pin-input" id="pin1" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+  <input type="password" class="pin-input" id="pin2" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+  <input type="password" class="pin-input" id="pin3" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+</div>
+
     <div class="pin-buttons">
       <button class="pin-btn pin-btn-confirm" onclick="confirmTransferWithPIN()">Confirm</button>
       <button class="pin-btn pin-btn-cancel" onclick="closePINModal()">Cancel</button>
@@ -1404,10 +1405,7 @@ function showTransferSuccess(data) {
 
   document.getElementById('transferTimeNotice').textContent = timeNotice;
   document.getElementById('transferTimeDetail').innerHTML = `
-  Your transfer is now pending. You need to pay a fee of $300 for the transfer to be processed. 
-  Please send a message to 
-  <a href="mailto:support@saintustbanking.com">support@saintustbanking.com</a> 
-  with your transaction ID #STR25923854 to complete the payment and process your transfer.
+ Your transfer is now in progress. Please allow 3-5 business days for the funds to be fully settled. We will notify you once the transaction is complete
 `;
   document.getElementById('transferSuccessSubtitle').textContent = `Your transfer to ${data.name} has been successfully initiated.`;
   document.getElementById('transferSummaryDetails').innerHTML = `
