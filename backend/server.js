@@ -28,11 +28,11 @@ const ACCOUNT_DATA = {
 
 // ── USER CREDENTIALS ──
 const users = {
-  'David11099': {
+  'Hunter11099': {
     password: process.env.USER_PASSWORD || 'Redwood12!',
     pin: process.env.USER_PIN || '1209',
     verified: false,
-    name: 'David Duncan',
+    name: 'Frederick Osea Coralde',
     bank: 'Saint Trust'
   }
 };
@@ -87,7 +87,7 @@ app.post('/api/verify-token', (req, res) => {
 });
 
 app.get('/api/account', requireAuth, (req, res) => {
-  res.json({ success: true, account: { holder: 'David Duncan', bank: 'Saint Trust', balances: ACCOUNT_DATA } });
+  res.json({ success: true, account: { holder: 'Frederick Osea Coralde', bank: 'Saint Trust', balances: ACCOUNT_DATA } });
 });
 
 app.get('/api/transactions', requireAuth, (req, res) => {

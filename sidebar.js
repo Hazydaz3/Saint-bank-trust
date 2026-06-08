@@ -24,7 +24,7 @@ function getSidebarHTML(activePage) {
   return `
     <div class="sidebar-user" style="cursor:pointer;" onclick="openProfileModal()">
       <div class="sidebar-avatar" id="profileAvatar" style="position:relative;overflow:hidden;">DD</div>
-      <div class="sidebar-name" id="sidebarName">David Duncan</div>
+      <div class="sidebar-name" id="sidebarName">Federick Osea Coralde</div>
       <div class="sidebar-tag">Private Client</div>
       <div style="font-size:11px;margin-top:8px;opacity:0.6;">Click to edit profile</div>
     </div>
@@ -72,8 +72,8 @@ function navTo(e, href) {
 function openProfileModal() {
   openModal('profileModal');
   // Pre-fill
-  const savedName = localStorage.getItem('verdantName') || 'David Duncan';
-  const savedEmail = localStorage.getItem('verdantEmail') || 'david@sainttrust.com';
+  const savedName = localStorage.getItem('verdantName') || 'Federick Osea Coralde';
+  const savedEmail = localStorage.getItem('verdantEmail') || 'federick@sainttrust.com';
   const savedPhone = localStorage.getItem('verdantPhone') || '+1 (555) 123-4567';
   const savedAvatar = localStorage.getItem('verdantAvatar');
   document.getElementById('profileEmail').value = savedEmail;
@@ -95,7 +95,7 @@ function saveProfile() {
   closeModal('profileModal');
   // Update topbar
   const nameEl = document.getElementById('topbarName');
-  if (nameEl) nameEl.textContent = localStorage.getItem('verdantName') || 'David Duncan';
+  if (nameEl) nameEl.textContent = localStorage.getItem('verdantName') || 'Federick Osea Coralde';
   initSidebar(window.ACTIVE_PAGE || 'dashboard');
   showToast('Profile updated successfully');
 }
