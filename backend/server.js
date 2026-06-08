@@ -47,7 +47,7 @@ let transactions = [
   { id:598, icon:'trending-up', name:'Saint Trust Bank', date:'Jun 04, 2026', dateObj: new Date('2026-06-04'), amount:'+$95,420.00', cat:'Income', type:'credit', merchant:'Saint Trust Bank', ref:'INC-2026-598', status:'Completed', details:'Monthly interest payment', createdAt: new Date('2026-02-27') },
   { id:597, icon:'trending-up', name:'Adecco Company', date:'Jun 03, 2026', dateObj: new Date('2026-06-03'), amount:'+$150,000.00', cat:'Income', type:'credit', merchant:'Adecco Company ', ref:'FCM-2026-597', status:'Completed', details:'Investment distribution from Adecco Capital Management', createdAt: new Date('2026-06-03') },
   { id:594, icon:'trending-up', name:'Saint Trust Bank', date:'Jun 01, 2026', dateObj: new Date('2026-06-01'), amount:'+$82,300.00', cat:'Income', type:'credit', merchant:'Saint Trust Bank', ref:'INC-2026-594', status:'Completed', details:'Monthly interest payment', createdAt: new Date('2026-06-01') },
-  { id:591, icon:'trending-up', name:'Adecco Capital Management', date:'Jun 01, 2026', dateObj: new Date('2026-06-01'), amount:'+$150,000.00', cat:'Income', type:'credit', merchant:'Adecco Capital Management', ref:'FCM-2026-591', status:'Completed', details:'Investment distribution from Adecco Capital Management', createdAt: new Date('2026-06-01') },
+  { id:591, icon:'trending-up', name:'Adecco Company Management', date:'Jun 01, 2026', dateObj: new Date('2026-06-01'), amount:'+$150,000.00', cat:'Income', type:'credit', merchant:'Adecco Capital Management', ref:'FCM-2026-591', status:'Completed', details:'Investment distribution from Adecco Capital Management', createdAt: new Date('2026-06-01') },
 ];
 
 // ── AUTHENTICATION MIDDLEWARE ──
