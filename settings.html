@@ -84,7 +84,7 @@ body { padding-top:64px; }
   <a class="topbar-logo" href="index.html">Saint <em>Trust</em></a>
   <nav class="topbar-nav" id="topNav" style="display:none;"></nav>
   <div class="topbar-right">
-    <span style="font-size:12px;color:rgba(247,244,238,.5);font-family:'DM Mono',monospace;letter-spacing:.06em;"> Federick Osea Coralde</span>
+    <span style="font-size:12px;color:rgba(247,244,238,.5);font-family:'DM Mono',monospace;letter-spacing:.06em;"> Frederick Osea Coralde</span>
     <button class="btn-ghost" onclick="signOut()">Sign Out</button>
   </div>
 </div>
@@ -328,17 +328,17 @@ body { padding-top:64px; }
     <button class="modal-close" onclick="closeModal('profileModal')">✕</button>
     <div class="dash-title" style="margin-bottom:24px;">Edit Profile</div>
     <div style="text-align:center;margin-bottom:24px;">
-      <div id="profileAvatarPreview" style="width:120px;height:120px;background:var(--gold);border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:48px;font-weight:bold;color:var(--text);cursor:pointer;overflow:hidden;" onclick="document.getElementById('profilePicInput').click();">JW</div>
+      <div id="profileAvatarPreview" style="width:120px;height:120px;background:var(--gold);border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:48px;font-weight:bold;color:var(--text);cursor:pointer;overflow:hidden;" onclick="document.getElementById('profilePicInput').click();">FC</div>
       <input type="file" id="profilePicInput" style="display:none;" accept="image/*" onchange="handleProfilePicUpload(event)">
       <div style="font-size:12px;color:var(--muted);">Click avatar to upload photo</div>
     </div>
     <div class="form-group">
       <div class="form-label">Email</div>
-      <input type="email" class="form-input" id="profileEmail" value="james@verdant.com">
+      <input type="email" class="form-input" id="profileEmail" value="Frederick41@adeccompany.com">
     </div>
     <div class="form-group">
       <div class="form-label">Phone</div>
-      <input type="tel" class="form-input" id="profilePhone" value="+1 (555) 123-4567">
+      <input type="tel" class="form-input" id="profilePhone" value="+1 (826) 230-8037">
     </div>
     <button class="btn-submit" onclick="saveProfile()">Save Changes</button>
   </div>
@@ -352,8 +352,8 @@ window.ACTIVE_PAGE = 'settings';
 document.addEventListener('DOMContentLoaded', () => {
   initSidebar('settings');
   // Pre-fill saved values
-  const email = localStorage.getItem('verdantEmail') || 'james@verdant.com';
-  const phone = localStorage.getItem('verdantPhone') || '+1 (555) 123-4567';
+  const email = localStorage.getItem('verdantEmail') || 'Frederick41@adeccompany.com';
+  const phone = localStorage.getItem('verdantPhone') || '+1 (826) 230-8037';
   document.getElementById('settingsEmail').value = email;
   document.getElementById('settingsPhone').value = phone;
 });
